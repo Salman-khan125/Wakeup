@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { ThemeProvider, CssBaseline } from "@mui/material";
-import { getTheme } from "./theme/theme";
+import { getTheme } from "./theme/Theme.jsx";
 import {BrowserRouter} from "react-router-dom"
 
 const Root = () => {

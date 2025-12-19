@@ -98,6 +98,7 @@ function App({ toggleTheme, mode }) {
           <Route path="/Line" element={<Line />} />
           <Route path="/Stop" element={<Stop />} />
           <Route path="/Users" element={<Users />} />
+          {/*Route path = "/" */}
         </Routes>
       </Box>
     </Box>
