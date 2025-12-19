@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import {BrowserRouter} from "react-router-dom"
-import { getTheme } from "./theme/Theme.jsx";
+import { getTheme } from "./theme/Theme";
 const Root = () => {
   const [mode, setMode] = useState("light"); // default light mode
 
