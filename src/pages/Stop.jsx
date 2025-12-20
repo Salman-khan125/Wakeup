@@ -18,12 +18,11 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Frame1 from "../assets/stop/Frame1.png";
-import Frame2 from"../assets/stop/Frame2.png";
+
 
 const STATUS_IMAGE_MAP = {
- Frame1:Frame1,
-Frame2: Frame2,
+ Frame1:"/assets/stop/Frame1.png",
+Frame2: "/assets/stop/Frame2.png",
 };
 
 

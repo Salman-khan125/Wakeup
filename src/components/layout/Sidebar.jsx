@@ -13,14 +13,14 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { NavLink } from "react-router-dom";
 
 const menuItems = [
-  { text: "Dashboard", icon: "/src/assets/icons/dashboard.svg", path: "/dashboard" },
-  { text: "Country", icon: "/src/assets/sidebar/country.png", path: "/Country" },
-  { text: "Company", icon: "/src/assets/sidebar/company.png", path: "/Company" },
-  { text: "Bus", icon: "/src/assets/sidebar/bus.png", path: "/Bus" },
-  { text: "Driver", icon: "/src/assets/sidebar/driver.png", path: "/Driver" },
-  { text: "Line", icon: "/src/assets/sidebar/line.png", path: "/Line" },
-  { text: "Stop", icon: "/src/assets/sidebar/stop.png", path: "/Stop" },
-  { text: "Users", icon: "/src/assets/sidebar/user.png", path: "/Users" },
+  { text: "Dashboard", icon: "./assets/icons/dashboard.svg", path: "/dashboard" },
+  { text: "Country", icon: "/assets/country/country.png", path: "/Country" },
+  { text: "Company", icon: "/assets/company/company.png", path: "/Company" },
+  { text: "Bus", icon: "/assets/bus/bus.png", path: "/Bus" },
+  { text: "Driver", icon: "/assets/driver/driver.png", path: "/Driver" },
+  { text: "Line", icon: "/assets/line/line.png", path: "/Line" },
+  { text: "Stop", icon: "/assets/stop/stop.png", path: "/Stop" },
+  { text: "Users", icon: "/assets/Users/user.png", path: "/Users" },
 ];
 
 const Sidebar = ({ isMobile, mobileOpen, onClose }) => {
@@ -44,6 +44,7 @@ const Sidebar = ({ isMobile, mobileOpen, onClose }) => {
           display: "flex",
           flexDirection: "column",
           transition: "width 0.3s",
+          
         },
       }}
     >
@@ -60,7 +61,7 @@ const Sidebar = ({ isMobile, mobileOpen, onClose }) => {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, overflowX: "hidden" }}>
             <Box
               component="img"
-              src="/src/assets/sidebar/logo.png"
+              src="/assets/logo/logo.png"
               alt="Wakeup"
               sx={{ width: 90, height: 50 }}
             />

@@ -18,12 +18,12 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import offline from "../assets/driver/offline.png";
-import online from "../assets/driver/online.png";
+
 
 const STATUS_IMAGE_MAP = {
-  online:online,
-  offline: offline,
+  online: "/assets/driver/offline.png",
+  offline: "/assets/driver/online.png",
+
 };
 
 

@@ -18,14 +18,12 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import green from "../assets/bus/green.png";
-import yellow from "../assets/bus/yellow.png";
-import orange from "../assets/bus/orange.png";
+;
 
 const STATUS_IMAGE_MAP = {
-  green,
-  yellow,
-  orange,
+  green: "/assets/bus/green.png",
+  yellow: "/assets/bus/yellow.png",
+  orange : "/assets/bus/orange.png",
 };
 const STATUS_DIMENSIONS = {
   green: { width: "auto", height: 40 }, // square
