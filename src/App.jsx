@@ -15,7 +15,7 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 
 import Sidebar from "./components/layout/Sidebar";
 import Country from "./pages/Country";
-import Company from "./pages/company";
+import Company from "./pages/Company";
 import Bus from "./pages/Bus";
 import Driver from "./pages/Driver";
 import Line from "./pages/Line";
