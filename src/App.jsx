@@ -64,14 +64,16 @@ function App({ toggleTheme, mode }) {
       <Box
         component="main"
         sx={{
+            minWidth: 0,          // prevents horizontal shrink
+    overflowX: "hidden",
           flexGrow: 1,
           p: 3,
-          mt: isMobile ? 8 : 0, // offset for AppBar
+          mt: isMobile ? 8 : 0, 
         }}
       >
         <Box
           sx={{
-            position: "fixed",
+           position:"fixed",
             top: 16,
             right: 16,
             zIndex: 1300,
