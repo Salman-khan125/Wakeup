@@ -21,6 +21,11 @@ import Driver from "./pages/Driver";
 import Line from "./pages/Line";
 import Stop from "./pages/Stop";
 import Users from "./pages/Users";
+import AddCompany from "./pages/AddComany";
+import AddBus from "./pages/AddBus";
+import AddDriver from "./pages/AddDriver";
+import AddStop from "./pages/AddStop";
+import AddUsers from "./pages/AddUsers";
 
 function App({ toggleTheme, mode }) {
   const theme = useTheme();
@@ -64,16 +69,16 @@ function App({ toggleTheme, mode }) {
       <Box
         component="main"
         sx={{
-            minWidth: 0,          // prevents horizontal shrink
-    overflowX: "hidden",
+          minWidth: 0, // prevents horizontal shrink
+          overflowX: "hidden", // prevents layout compression  
           flexGrow: 1,
           p: 3,
-          mt: isMobile ? 8 : 0, 
+          mt: isMobile ? 8 : 0,
         }}
       >
         <Box
           sx={{
-           position:"fixed",
+            position: "fixed",
             top: 16,
             right: 16,
             zIndex: 1300,
@@ -95,11 +100,16 @@ function App({ toggleTheme, mode }) {
           <Route path="/dashboard" element={<h1>Dashboard</h1>} />
           <Route path="/Country" element={<Country />} />
           <Route path="/Company" element={<Company />} />
+          <Route path="/Company/add" element={<AddCompany />} />
           <Route path="/Bus" element={<Bus />} />
+          <Route path="/Bus/add" element={<AddBus />} />
           <Route path="/Driver" element={<Driver />} />
+          <Route path="/Driver/add" element={<AddDriver />} />
           <Route path="/Line" element={<Line />} />
           <Route path="/Stop" element={<Stop />} />
+          <Route path="/Stop/add" element={<AddStop />} />
           <Route path="/Users" element={<Users />} />
+           <Route path="/Users/add" element={<AddUsers />} />
           {/*Route path = "/" */}
         </Routes>
       </Box>

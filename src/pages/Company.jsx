@@ -15,17 +15,62 @@ import {
   Pagination,
   useTheme,
   Grid,
+ 
 } from "@mui/material";
+import { Link } from "react-router-dom";
+
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const allcompanies = [
-  { id: 1, name: "Co founder", address: "Mainroad near st haul school", contact: "+00*******",Registration:"16/12/2025",Email:"AlleyJhone" },
-  { id: 2, name: "Co founder", address: "Mainroad near st haul school", contact: "+00*******",Registration:"16/12/2025",Email:"AlleyJhone" },
-  { id: 3, name: "Co founder", address: "Mainroad near st haul school", contact: "+00*******",Registration:"16/12/2025",Email:"AlleyJhone" },
-  { id: 4, name: "Co founder", address: "Mainroad near st haul school", contact: "+00*******",Registration:"16/12/2025",Email:"AlleyJhone" },
-  { id: 5, name: "Co founder", address: "Mainroad near st haul school", contact: "+00*******",Registration:"16/12/2025",Email:"AlleyJhone" },
-  { id: 6, name: "Co founder", address: "Mainroad near st haul school", contact: "+00*******",Registration:"16/12/2025",Email:"AlleyJhone" },
+  {
+    id: 1,
+    name: "Co founder",
+    address: "Mainroad near st haul school",
+    contact: "+00*******",
+    Registration: "16/12/2025",
+    Email: "AlleyJhone",
+  },
+  {
+    id: 2,
+    name: "Co founder",
+    address: "Mainroad near st haul school",
+    contact: "+00*******",
+    Registration: "16/12/2025",
+    Email: "AlleyJhone",
+  },
+  {
+    id: 3,
+    name: "Co founder",
+    address: "Mainroad near st haul school",
+    contact: "+00*******",
+    Registration: "16/12/2025",
+    Email: "AlleyJhone",
+  },
+  {
+    id: 4,
+    name: "Co founder",
+    address: "Mainroad near st haul school",
+    contact: "+00*******",
+    Registration: "16/12/2025",
+    Email: "AlleyJhone",
+  },
+  {
+    id: 5,
+    name: "Co founder",
+    address: "Mainroad near st haul school",
+    contact: "+00*******",
+    Registration: "16/12/2025",
+    Email: "AlleyJhone",
+  },
+  {
+    id: 6,
+    name: "Co founder",
+    address: "Mainroad near st haul school",
+    contact: "+00*******",
+    Registration: "16/12/2025",
+    Email: "AlleyJhone",
+  },
   // add more as needed
 ];
 
@@ -41,7 +86,7 @@ const Company = () => {
 
   // calculate current page data
   const currentcompanies = allcompanies.slice(
-    (page - 1) * PAGE_SIZE ,
+    (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE
   );
 
@@ -69,19 +114,27 @@ const Company = () => {
           flexWrap: "wrap",
           gap: 2,
           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
-          
         }}
       >
-      
         <TextField
           placeholder="Search"
           variant="outlined"
           size="small"
-          sx={{ flex: 1, minWidth: 200, "& .MuiOutlinedInput-root": {
-            borderRadius: 3,
-          }, }}
+          sx={{
+            flex: 1,
+            minWidth: 200,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: 3,
+            },
+          }}
         />
-        <Button variant="contained" sx={{ height: 40, borderRadius:3 }}>
+       
+        <Button
+          component={Link}
+          to="/Company/add"
+          variant="contained"
+          sx={{ height: 40, borderRadius: 3 }}
+        >
           + Add
         </Button>
       </Box>
@@ -93,35 +146,48 @@ const Company = () => {
           mb: 2,
           borderRadius: 2,
           overflowX: "auto",
-         
+
           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
         }}
       >
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              <TableCell
+                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+              >
                 #
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              <TableCell
+                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+              >
                 Company Name
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              <TableCell
+                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+              >
                 Head Office Address
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              <TableCell
+                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+              >
                 Contact No
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              <TableCell
+                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+              >
                 Registration Date
               </TableCell>
-               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              <TableCell
+                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+              >
                 Email
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              <TableCell
+                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+              >
                 Action
               </TableCell>
-               
             </TableRow>
           </TableHead>
           <TableBody>
@@ -163,14 +229,13 @@ const Company = () => {
             page={page}
             onChange={handleChange}
             color="primary"
-            
           />
         </Box>
       )}
 
       {/* company Display List (optional) */}
       <Box>
-        <Typography variant="h6"fontWeight={600} sx={{ mb: 1 }}>
+        <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
           company Display
         </Typography>
         <TableContainer
@@ -178,20 +243,25 @@ const Company = () => {
           sx={{
             borderRadius: 2,
             overflowX: "auto",
-            backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+            backgroundColor:
+              theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
           }}
         >
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell sx={{ width: 50 }}>#</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>List</TableCell>
+                <TableCell
+                  sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+                >
+                  List
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {currentcompanies.map((company) => (
-                <TableRow  key={company.id}>
-                  <TableCell >{company.id}</TableCell>
+                <TableRow key={company.id}>
+                  <TableCell>{company.id}</TableCell>
                   <TableCell>{company.name}</TableCell>
                 </TableRow>
               ))}
@@ -199,116 +269,7 @@ const Company = () => {
           </Table>
         </TableContainer>
       </Box>
-      <Paper
-  elevation={0}
-  sx={{
-    mt: 4,
-    p: { xs: 2, md: 3 },
-    borderRadius: 3,
-     backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
-  }}
->
-  {/* Title */}
-  <Typography variant="h6" fontWeight={600}>
-    Add Country
-  </Typography>
-
-  <Typography
-    variant="body2"
-    color="text.secondary"
-    sx={{ mt: 0.5, mb: 3 }}
-  >
-    Information about your current plan and usages
-  </Typography>
-
-  {/* Top Search */}
-  <TextField
-    fullWidth
-    placeholder="Search"
-    sx={{
-      mb: 3,
-      "& .MuiOutlinedInput-root": {
-        borderRadius: 3,
-      },
-    }}
-  />
-
-  {/* Form Fields */}
-  <Grid container spacing={3}>
-    {/* Country Name */}
-    <Grid item xs={12} md={6}>
-      <Typography
-        variant="body2"
-        sx={{ mb: 1, fontWeight: 700 }}
-      >
-        Country Name
-      </Typography>
-      <TextField
-        fullWidth
-        placeholder="Search"
-        sx={{
-          "& .MuiOutlinedInput-root": {
-            borderRadius: 3,
-          },
-        }}
-      />
-    </Grid>
-
-    {/* ISO or Internal Code */}
-    <Grid item xs={12} md={6}>
-      <Typography
-        variant="body2"
-        sx={{ mb: 1, fontWeight: 700 }}
-      >
-        ISO or Internal Code
-      </Typography>
-      <TextField
-        fullWidth
-        placeholder="Search"
-        sx={{
-          "& .MuiOutlinedInput-root": {
-            borderRadius: 3,
-          },
-        }}
-      />
-    </Grid>
-
-    {/* Geographic Region */}
-    <Grid item xs={12} md={6}>
-      <Typography
-        variant="body2"
-        sx={{ mb: 1, fontWeight: 700 }}
-      >
-        Geographic Region Or area
-      </Typography>
-      <TextField
-        fullWidth
-        placeholder="Search"
-        sx={{
-          "& .MuiOutlinedInput-root": {
-            borderRadius: 3,
-          },
-        }}
-      />
-    </Grid>
-  </Grid>
-
-  {/* Submit Button */}
-  <Box sx={{ mt: 4 }}>
-    <Button
-      variant="contained"
-      sx={{
-        textTransform: "none",
-        px: 4,
-        py: 1.2,
-        borderRadius: 2,
-      }}
-    >
-      Submit
-    </Button>
-  </Box>
-</Paper>
-
+     
     </Box>
   );
 };
