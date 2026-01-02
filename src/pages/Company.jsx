@@ -14,15 +14,13 @@ import {
   IconButton,
   Pagination,
   useTheme,
-  Grid,
- 
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const allcompanies = [
+const initialCompanies = [
   {
     id: 1,
     name: "Co founder",
@@ -71,40 +69,48 @@ const allcompanies = [
     Registration: "16/12/2025",
     Email: "AlleyJhone",
   },
-  // add more as needed
 ];
 
-const PAGE_SIZE = 4; // show 4 countries per page
+const PAGE_SIZE = 4;
 
 const Company = () => {
   const theme = useTheme();
+  const [companies, setCompanies] = useState(initialCompanies);
   const [page, setPage] = useState(1);
 
-  const handleChange = (event, value) => {
-    setPage(value);
+  const handleChange = (_, value) => setPage(value);
+
+  const handleDelete = (id) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this company?"
+    );
+    if (!confirmed) return;
+
+    setCompanies((prev) => prev.filter((c) => c.id !== id));
+
+    if ((page - 1) * PAGE_SIZE >= companies.length - 1) {
+      setPage((p) => Math.max(p - 1, 1));
+    }
   };
 
-  // calculate current page data
-  const currentcompanies = allcompanies.slice(
+  const currentCompanies = companies.slice(
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE
   );
 
-  const pageCount = Math.ceil(allcompanies.length / PAGE_SIZE);
+  const pageCount = Math.ceil(companies.length / PAGE_SIZE);
 
   return (
     <Box sx={{ width: "100%" }}>
-      {/* Header */}
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight="600">
+        <Typography variant="h5" fontWeight={600}>
           Company
         </Typography>
-        <Typography variant="body2" color="textSecondary">
+        <Typography variant="body2" color="text.secondary">
           Information about your current plan and usages
         </Typography>
       </Box>
 
-      {/* Search + Add */}
       <Box
         sx={{
           display: "flex",
@@ -113,22 +119,16 @@ const Company = () => {
           mb: 3,
           flexWrap: "wrap",
           gap: 2,
-          backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+         
+           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
         }}
       >
         <TextField
           placeholder="Search"
-          variant="outlined"
           size="small"
-          sx={{
-            flex: 1,
-            minWidth: 200,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: 3,
-            },
-          }}
+          sx={{ flex: 1, minWidth: 200 }}
         />
-       
+
         <Button
           component={Link}
           to="/Company/add"
@@ -139,68 +139,22 @@ const Company = () => {
         </Button>
       </Box>
 
-      {/* Main Table */}
-      <TableContainer
-        component={Paper}
-        sx={{
-          mb: 2,
-          borderRadius: 2,
-          overflowX: "auto",
-
-          backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
-        }}
-      >
+      <TableContainer component={Paper} sx={{ borderRadius: 2,  backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f", }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell
-                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
-              >
-                #
-              </TableCell>
-              <TableCell
-                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
-              >
-                Company Name
-              </TableCell>
-              <TableCell
-                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
-              >
-                Head Office Address
-              </TableCell>
-              <TableCell
-                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
-              >
-                Contact No
-              </TableCell>
-              <TableCell
-                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
-              >
-                Registration Date
-              </TableCell>
-              <TableCell
-                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
-              >
-                Email
-              </TableCell>
-              <TableCell
-                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
-              >
-                Action
-              </TableCell>
+              <TableCell>#</TableCell>
+              <TableCell>Company Name</TableCell>
+              <TableCell>Head Office Address</TableCell>
+              <TableCell>Contact No</TableCell>
+              <TableCell>Registration Date</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentcompanies.map((company) => (
-              <TableRow
-                key={company.id}
-                sx={{
-                  "&:hover": {
-                    backgroundColor:
-                      theme.palette.mode === "light" ? "#f5f5f5" : "#2c2c3e",
-                  },
-                }}
-              >
+            {currentCompanies.map((company) => (
+              <TableRow key={company.id}>
                 <TableCell>{company.id}</TableCell>
                 <TableCell>{company.name}</TableCell>
                 <TableCell>{company.address}</TableCell>
@@ -208,10 +162,20 @@ const Company = () => {
                 <TableCell>{company.Registration}</TableCell>
                 <TableCell>{company.Email}</TableCell>
                 <TableCell>
-                  <IconButton size="small" color="primary">
+                  <IconButton
+                    size="small"
+                    color="primary"
+                    component={Link}
+                    to={`/Company/edit/${company.id}`}
+                  >
                     <EditIcon fontSize="small" />
                   </IconButton>
-                  <IconButton size="small" color="error">
+
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={() => handleDelete(company.id)}
+                  >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
                 </TableCell>
@@ -221,55 +185,53 @@ const Company = () => {
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
       {pageCount > 1 && (
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
           <Pagination
             count={pageCount}
             page={page}
             onChange={handleChange}
-            color="primary"
           />
         </Box>
       )}
-
-      {/* company Display List (optional) */}
       <Box>
-        <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
-          company Display
-        </Typography>
-        <TableContainer
-          component={Paper}
-          sx={{
-            borderRadius: 2,
-            overflowX: "auto",
-            backgroundColor:
-              theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
-          }}
-        >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ width: 50 }}>#</TableCell>
-                <TableCell
-                  sx={{ fontWeight: 600, color: theme.palette.text.primary }}
-                >
-                  List
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {currentcompanies.map((company) => (
-                <TableRow key={company.id}>
-                  <TableCell>{company.id}</TableCell>
-                  <TableCell>{company.name}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
-     
+  <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
+    company Display
+  </Typography>
+
+  <TableContainer
+    component={Paper}
+    sx={{
+      borderRadius: 2,
+      overflowX: "auto",
+      backgroundColor:
+        theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+    }}
+  >
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell sx={{ width: 50 }}>#</TableCell>
+          <TableCell
+            sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+          >
+            List
+          </TableCell>
+        </TableRow>
+      </TableHead>
+
+      <TableBody>
+        {currentCompanies.map((company) => (
+          <TableRow key={company.id}>
+            <TableCell>{company.id}</TableCell>
+            <TableCell>{company.name}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </TableContainer>
+</Box>
+
     </Box>
   );
 };

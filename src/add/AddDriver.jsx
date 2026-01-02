@@ -1,13 +1,11 @@
-import React from "react";
+import React from 'react'
 import { Box, Typography, TextField, Button, Grid, Paper, useTheme } from "@mui/material";
 
-
-const AddBus = () => {
-     const theme = useTheme();
-    
+const AddDriver = () => {
+    const theme = useTheme();
   return (
-    <Box sx={{ width: "100%" }}>
-      <Paper
+    <box sx={{ width: "100%" }}>
+       <Paper
         elevation={0}
         sx={{
           mt: 4,
@@ -18,7 +16,7 @@ const AddBus = () => {
       >
         {/* Title */}
         <Typography variant="h6" fontWeight={600}>
-          Add Bus
+          Add Driver
         </Typography>
 
         <Typography
@@ -29,24 +27,14 @@ const AddBus = () => {
           Information about your current plan and usages
         </Typography>
 
-        {/* Top Search */}
-        <TextField
-          fullWidth
-          placeholder="Search"
-          sx={{
-            mb: 3,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: 3,
-            },
-          }}
-        />
+       
 
         {/* Form Fields */}
         <Grid container spacing={3}>
           {/* Countrynumber */}
           <Grid item xs={12} md={6}>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-              Company Name
+              First Name
             </Typography>
             <TextField
               fullWidth
@@ -62,7 +50,7 @@ const AddBus = () => {
           {/* ISO or Internal Code */}
           <Grid item xs={12} md={6}>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-              Head Office Address
+              Last Name
             </Typography>
             <TextField
               fullWidth
@@ -81,7 +69,7 @@ const AddBus = () => {
           {/* Geographic Region */}
           <Grid item xs={12} md={6}>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-              Contact Number
+            Phone  Number
             </Typography>
             <TextField
               fullWidth
@@ -98,7 +86,7 @@ const AddBus = () => {
            
             <Grid item xs={12} md={6}>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-             Email
+             Email Address
             </Typography>
             <TextField
               fullWidth
@@ -115,7 +103,7 @@ const AddBus = () => {
 
            <Grid item xs={12} md={6}>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-              Geographic Region Or area
+              License Number
             </Typography>
             <TextField
               fullWidth
@@ -146,8 +134,8 @@ const AddBus = () => {
           </Button>
         </Box>
       </Paper>
-    </Box>
+    </box>
   )
 }
 
-export default AddBus
+export default AddDriver

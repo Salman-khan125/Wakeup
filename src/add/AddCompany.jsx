@@ -22,11 +22,7 @@ const AddCompany = () => {
           Fill in the information to add a new company
         </Typography>
 
-        <TextField
-          fullWidth
-          placeholder="Search"
-          sx={{ mb: 3, "& .MuiOutlinedInput-root": { borderRadius: 3 } }}
-        />
+       
 
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
@@ -52,11 +48,18 @@ const AddCompany = () => {
 
           <Grid item xs={12} md={6}>
             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-              Email
+              Email Address
+            </Typography>
+            <TextField fullWidth placeholder="Email" sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} />
+          </Grid>
+              <Grid item xs={12} md={6}>
+            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+              Registration Date
             </Typography>
             <TextField fullWidth placeholder="Email" sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} />
           </Grid>
         </Grid>
+        
 
         <Box sx={{ mt: 4 }}>
           <Button variant="contained" sx={{ textTransform: "none", px: 4, py: 1.2, borderRadius: 2 }}>

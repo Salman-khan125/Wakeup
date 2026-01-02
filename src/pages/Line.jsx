@@ -17,35 +17,48 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Link } from "react-router-dom";
 
-const alllines = [
+// Fixed: Changed to camelCase for consistency
+const allLines = [
   { id: 1, name: "Alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
   { id: 2, name: "Alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
   { id: 3, name: "alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
   { id: 4, name: "Alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
   { id: 5, name: "Alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
-  { id: 6, name: "Alley", Email:"Alleyjhon@gmail.com", Role: "Region" },
+  { id: 6, name: "Alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
   { id: 7, name: "Alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
-  // add more as needed
 ];
 
-const PAGE_SIZE = 4; // show 4 countries per page
+const PAGE_SIZE = 4;
 
 const Line = () => {
   const theme = useTheme();
+  
+  // Fixed: Use camelCase for state variable to avoid conflicts
+  const [lines, setLines] = useState(allLines);
   const [page, setPage] = useState(1);
+
+  const handleDelete = (id) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this line?" // Fixed: Changed "company" to "line"
+    );
+    if (!confirmed) return;
+
+    setLines((prev) => prev.filter((l) => l.id !== id));
+
+    if ((page - 1) * PAGE_SIZE >= lines.length - 1) {
+      setPage((p) => Math.max(p - 1, 1));
+    }
+  };
 
   const handleChange = (event, value) => {
     setPage(value);
   };
 
-  // calculate current page data
-  const currentlines = alllines.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE
-  );
-
-  const pageCount = Math.ceil(alllines.length / PAGE_SIZE);
+  // Fixed: Use state variable 'lines' instead of 'alllines'
+  const currentLines = lines.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const pageCount = Math.ceil(lines.length / PAGE_SIZE);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -69,7 +82,6 @@ const Line = () => {
           flexWrap: "wrap",
           gap: 2,
           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
-          
         }}
       >
         <TextField
@@ -78,7 +90,12 @@ const Line = () => {
           size="small"
           sx={{ flex: 1, minWidth: 200 }}
         />
-        <Button variant="contained" sx={{ height: 40, borderRadius:3 }}>
+        <Button 
+          variant="contained" 
+          sx={{ height: 40, borderRadius: 3 }}
+          component={Link}
+          to="/Line/add"
+        >
           + Add
         </Button>
       </Box>
@@ -90,7 +107,6 @@ const Line = () => {
           mb: 2,
           borderRadius: 2,
           overflowX: "auto",
-         
           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
         }}
       >
@@ -104,10 +120,10 @@ const Line = () => {
                 Line Name
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                 Email Address
+                Email Address
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Role 
+                Role
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 Action
@@ -115,9 +131,10 @@ const Line = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentlines.map((Line) => (
+            {/* Fixed: Changed variable name from 'Line' to 'line' (lowercase) */}
+            {currentLines.map((line) => (
               <TableRow
-                key={Line.id}
+                key={line.id}
                 sx={{
                   "&:hover": {
                     backgroundColor:
@@ -125,15 +142,24 @@ const Line = () => {
                   },
                 }}
               >
-                <TableCell>{Line.id}</TableCell>
-                <TableCell>{Line.name}</TableCell>
-                <TableCell>{Line.Email}</TableCell>
-                <TableCell>{Line.Role}</TableCell>
+                <TableCell>{line.id}</TableCell>
+                <TableCell>{line.name}</TableCell>
+                <TableCell>{line.Email}</TableCell>
+                <TableCell>{line.Role}</TableCell>
                 <TableCell>
-                  <IconButton size="small" color="primary">
+                  <IconButton
+                    size="small"
+                    color="primary"
+                    component={Link}
+                    to={`/Line/edit/${line.id}`} // Fixed: Changed to lowercase 'line'
+                  >
                     <EditIcon fontSize="small" />
                   </IconButton>
-                  <IconButton size="small" color="error">
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={() => handleDelete(line.id)} // Fixed: Changed to lowercase 'line'
+                  >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
                 </TableCell>
@@ -151,12 +177,11 @@ const Line = () => {
             page={page}
             onChange={handleChange}
             color="primary"
-            
           />
         </Box>
       )}
 
-      {/* Line Display List (optional) */}
+      {/* Line Display List */}
       <Box>
         <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
           Line Display
@@ -173,14 +198,17 @@ const Line = () => {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ width: 50 }}>#</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>List</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+                  List
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {currentlines.map((Line) => (
-                <TableRow  key={Line.id}>
-                  <TableCell >{Line.id}</TableCell>
-                  <TableCell >{Line.name}</TableCell>
+              {/* Fixed: Changed variable name from 'Line' to 'line' (lowercase) */}
+              {currentLines.map((line) => (
+                <TableRow key={line.id}>
+                  <TableCell>{line.id}</TableCell>
+                  <TableCell>{line.name}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

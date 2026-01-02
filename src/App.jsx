@@ -15,22 +15,34 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 
 import Sidebar from "./components/layout/Sidebar";
 import Country from "./pages/Country";
-import Company from "./pages/Company";
+import Company from "./pages/Company"; // This component has its own data
 import Bus from "./pages/Bus";
 import Driver from "./pages/Driver";
 import Line from "./pages/Line";
 import Stop from "./pages/Stop";
 import Users from "./pages/Users";
-import AddCompany from "./pages/AddComany";
-import AddBus from "./pages/AddBus";
-import AddDriver from "./pages/AddDriver";
-import AddStop from "./pages/AddStop";
-import AddUsers from "./pages/AddUsers";
+import AddCountry from "./add/AddCountry";
+import AddCompany from "./add/AddCompany";
+import AddBus from "./add/AddBus";
+import AddDriver from "./add/AddDriver";
+import AddStop from "./add/AddStop";
+import AddUsers from "./add/AddUsers";
+import EditCompany from "./EditForms/EditCompany";
+import EditCountry from "./EditForms/EditCountry";
+import EditBus from "./EditForms/EditBus";
+import EditDriver from "./EditForms/EditDriver";
+import EditLine from "./EditForms/EditLine";
+import EditStop from "./EditForms/EditStop";
+import EditUsers from "./EditForms/EditUsers";
 
 function App({ toggleTheme, mode }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
+  
+  // REMOVE THIS if your Company component has its own data
+  // const [companies, setCompanies] = useState(initialCompanies);
+
   return (
     <Box sx={{ display: "flex" }}>
       {/* Mobile AppBar */}
@@ -69,8 +81,8 @@ function App({ toggleTheme, mode }) {
       <Box
         component="main"
         sx={{
-          minWidth: 0, // prevents horizontal shrink
-          overflowX: "hidden", // prevents layout compression  
+          minWidth: 0,
+          overflowX: "hidden",
           flexGrow: 1,
           p: 3,
           mt: isMobile ? 8 : 0,
@@ -99,18 +111,27 @@ function App({ toggleTheme, mode }) {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<h1>Dashboard</h1>} />
           <Route path="/Country" element={<Country />} />
+          <Route path="/Country/add" element={<AddCountry />} />
+          <Route path="/Country/edit/:id" element={<EditCountry />} />
+          <Route path="/Company/edit/:id" element={<EditCompany />} />
           <Route path="/Company" element={<Company />} />
           <Route path="/Company/add" element={<AddCompany />} />
           <Route path="/Bus" element={<Bus />} />
           <Route path="/Bus/add" element={<AddBus />} />
+          <Route path="/Bus/edit/:id" element={<EditBus />} />
           <Route path="/Driver" element={<Driver />} />
           <Route path="/Driver/add" element={<AddDriver />} />
+          <Route path="/Driver/edit/:id" element={<EditDriver />} />
           <Route path="/Line" element={<Line />} />
+
+          <Route path="/Line/edit/:id" element={<EditLine />} />
+
           <Route path="/Stop" element={<Stop />} />
           <Route path="/Stop/add" element={<AddStop />} />
+          <Route path="/Stop/edit/:id" element={<EditStop />} />
           <Route path="/Users" element={<Users />} />
-           <Route path="/Users/add" element={<AddUsers />} />
-          {/*Route path = "/" */}
+          <Route path="/Users/add" element={<AddUsers />} />
+          <Route path="/Users/edit/:id" element={<EditUsers />} />
         </Routes>
       </Box>
     </Box>

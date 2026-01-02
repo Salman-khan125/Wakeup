@@ -44,17 +44,7 @@ const AddUser = () => {
           Information about your current plan and usages
         </Typography>
 
-        {/* Top Search */}
-        <TextField
-          fullWidth
-          placeholder="Search"
-          sx={{
-            mb: 3,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: 3,
-            },
-          }}
-        />
+      
 
         {/* Form Fields */}
         <Grid container spacing={3}>

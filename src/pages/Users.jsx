@@ -41,11 +41,27 @@ const allusers = [
 const PAGE_SIZE = 4; // show 4 countries per page
 const User = () => {
   const theme = useTheme();
+
+  const [users , setUsers] = useState(allusers)
   const [page, setPage] = useState(1);
+
+ const handleDelete = (id) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this line?" // Fixed: Changed "company" to "line"
+    );
+    if (!confirmed) return;
+
+    setLines((prev) => prev.filter((l) => l.id !== id));
+
+    if ((page - 1) * PAGE_SIZE >= user.length - 1) {
+      setPage((p) => Math.max(p - 1, 1));
+    }
+  };
 
   const handleChange = (event, value) => {
     setPage(value);
   };
+
 
   // calculate current page data
   const currentuser = allusers.slice(
@@ -174,10 +190,21 @@ const User = () => {
 
 
                 <TableCell>
-                  <IconButton size="small" color="primary">
+                  <IconButton 
+                  size="small" 
+                  color="primary"
+                  component={Link}
+                  to={`/Users/edit/${user.id}`}
+                  
+
+                  >
                     <EditIcon fontSize="small" />
                   </IconButton>
-                  <IconButton size="small" color="error">
+                  <IconButton 
+                  size="small" 
+                  color="error"
+                  onClick={() => handleDelete(user.id)}
+                  >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
                 </TableCell>

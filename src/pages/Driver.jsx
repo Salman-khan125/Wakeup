@@ -27,7 +27,7 @@ const STATUS_IMAGE_MAP = {
 };
 
 
-const alldrivers = [
+const allDrivers = [
   { id: 1, name: "Allley", lastname: "jhone", contact: "+00*******",Email:"AlleyJhone", license:"0947563", status:"online" },
   { id: 2, name: "Allley", lastname: "jhone", contact: "+00*******",Email:"AlleyJhone",license:"0947563",status:"online" },
   { id: 3, name: "Allley", lastname: "jhone", contact: "+00*******",Email:"AlleyJhone",license:"0947563",status:"offline" },
@@ -41,19 +41,36 @@ const PAGE_SIZE = 4; // show 4 countries per page
 
 const Driver = () => {
   const theme = useTheme();
+
+  const [Drivers, setDrivers] = useState(allDrivers);
   const [page, setPage] = useState(1);
+
+
+ 
+  const handleDelete = (id) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this company?"
+    );
+    if (!confirmed) return;
+
+    setDrivers((prev) => prev.filter((c) => c.id !== id));
+
+    if ((page - 1) * PAGE_SIZE >= Drivers.length - 1) {
+      setPage((p) => Math.max(p - 1, 1));
+    }
+  };
 
   const handleChange = (event, value) => {
     setPage(value);
   };
 
   // calculate current page data
-  const currentdriver = alldrivers.slice(
+  const currentdriver = allDrivers.slice(
     (page - 1) * PAGE_SIZE ,
     page * PAGE_SIZE
   );
 
-  const pageCount = Math.ceil(alldrivers.length / PAGE_SIZE);
+  const pageCount = Math.ceil(allDrivers.length / PAGE_SIZE);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -173,10 +190,19 @@ const Driver = () => {
 
 
                 <TableCell>
-                  <IconButton size="small" color="primary">
+                  <IconButton 
+                  size="small"
+                  color="primary"
+                  component={Link}
+                  to={`/Driver/edit/${driver.id}`}>
+                  
                     <EditIcon fontSize="small" />
                   </IconButton>
-                  <IconButton size="small" color="error">
+                  <IconButton 
+                  size="small"
+                   color="error"
+                   onClick={() => handleDelete(driver.id)}
+                    >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
                 </TableCell>

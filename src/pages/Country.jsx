@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import {Link} from "react-router-dom"
 
 const allCountries = [
   { id: 1, name: "London", code: "SL", region: "Region" },
@@ -33,11 +34,29 @@ const PAGE_SIZE = 4; // show 4 countries per page
 
 const Country = () => {
   const theme = useTheme();
+const [countries, setCountries] = useState(allCountries);
+
   const [page, setPage] = useState(1);
+  
+
+  const handleDelete = (id) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this company?"
+    );
+    if (!confirmed) return;
+
+    setCompanies((prev) => prev.filter((c) => c.id !== id));
+
+    if ((page - 1) * PAGE_SIZE >= countries.length - 1) {
+      setPage((p) => Math.max(p - 1, 1));
+    }
+  };
 
   const handleChange = (event, value) => {
     setPage(value);
   };
+
+  
 
   // calculate current page data
   const currentCountries = allCountries.slice(
@@ -132,10 +151,17 @@ const Country = () => {
                 <TableCell>{country.code}</TableCell>
                 <TableCell>{country.region}</TableCell>
                 <TableCell>
-                  <IconButton size="small" color="primary">
+                  <IconButton 
+                  size="small"
+                  color="primary"
+                  component={Link}
+                  to={`/Country/edit/${country.id}`}>
                     <EditIcon fontSize="small" />
                   </IconButton>
-                  <IconButton size="small" color="error">
+                  <IconButton 
+                  size="small"
+                  color="error"
+                  onClick={() => handleDelete(country.id)}>
                     <DeleteIcon fontSize="small" />
                   </IconButton>
                 </TableCell>
@@ -185,7 +211,7 @@ const Country = () => {
                   <TableCell >{country.name}</TableCell>
                 </TableRow>
               ))}
-            </TableBody>s
+            </TableBody>
           </Table>
         </TableContainer>
       </Box>
