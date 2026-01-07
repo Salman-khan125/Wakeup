@@ -21,14 +21,14 @@ import { Link } from "react-router-dom";
 import { useBuses } from "../context/BusContext";
 
 const STATUS_IMAGE_MAP = {
-  Active: "/assets/bus/green.png",
-  mentanace: "/assets/bus/yellow.png",
-  OutofService: "/assets/bus/orange.png",
+  Active: "/assets/bus/Active.png",
+  maintenance: "/assets/bus/maintenance.png",
+  OutofService: "/assets/bus/OutofService.png",
 };
 
 const STATUS_DIMENSIONS = {
   Active: { width: "auto", height: 40 },
-  mentanace: { width: "auto", height: 40 },
+  maintenance: { width: "auto", height: 40 },
   OutofService: { width: "auto", height: 40 },
 };
 
