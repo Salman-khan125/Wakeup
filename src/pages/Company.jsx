@@ -15,70 +15,21 @@ import {
   Pagination,
   useTheme,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-const initialCompanies = [
-  {
-    id: 1,
-    name: "Co founder",
-    address: "Mainroad near st haul school",
-    contact: "+00*******",
-    Registration: "16/12/2025",
-    Email: "AlleyJhone",
-  },
-  {
-    id: 2,
-    name: "Co founder",
-    address: "Mainroad near st haul school",
-    contact: "+00*******",
-    Registration: "16/12/2025",
-    Email: "AlleyJhone",
-  },
-  {
-    id: 3,
-    name: "Co founder",
-    address: "Mainroad near st haul school",
-    contact: "+00*******",
-    Registration: "16/12/2025",
-    Email: "AlleyJhone",
-  },
-  {
-    id: 4,
-    name: "Co founder",
-    address: "Mainroad near st haul school",
-    contact: "+00*******",
-    Registration: "16/12/2025",
-    Email: "AlleyJhone",
-  },
-  {
-    id: 5,
-    name: "Co founder",
-    address: "Mainroad near st haul school",
-    contact: "+00*******",
-    Registration: "16/12/2025",
-    Email: "AlleyJhone",
-  },
-  {
-    id: 6,
-    name: "Co founder",
-    address: "Mainroad near st haul school",
-    contact: "+00*******",
-    Registration: "16/12/2025",
-    Email: "AlleyJhone",
-  },
-];
+import { Link } from "react-router-dom";
+import { useCompanies } from "../context/CompanyContext"; // ADD THIS
 
 const PAGE_SIZE = 4;
 
 const Company = () => {
   const theme = useTheme();
-  const [companies, setCompanies] = useState(initialCompanies);
+  
+  // GET DATA FROM CONTEXT
+  const { companies, deleteCompany } = useCompanies();
+  
   const [page, setPage] = useState(1);
-
-  const handleChange = (_, value) => setPage(value);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleDelete = (id) => {
     const confirmed = window.confirm(
@@ -86,31 +37,41 @@ const Company = () => {
     );
     if (!confirmed) return;
 
-    setCompanies((prev) => prev.filter((c) => c.id !== id));
+    // USE CONTEXT FUNCTION
+    deleteCompany(id);
 
     if ((page - 1) * PAGE_SIZE >= companies.length - 1) {
       setPage((p) => Math.max(p - 1, 1));
     }
   };
 
-  const currentCompanies = companies.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE
-  );
-
-  const pageCount = Math.ceil(companies.length / PAGE_SIZE);
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
+       
+        const filteredCompanies = companies.filter(company =>
+  company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  company.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  company.contact.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  company.Registration.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  company.Email.toLowerCase().includes(searchTerm.toLowerCase())
+);
+  const currentCompanies = filteredCompanies.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const pageCount = Math.ceil(filteredCompanies.length / PAGE_SIZE);
 
   return (
     <Box sx={{ width: "100%" }}>
+      {/* Header */}
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight={600}>
+        <Typography variant="h5" fontWeight="600">
           Company
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="textSecondary">
           Information about your current plan and usages
         </Typography>
       </Box>
 
+      {/* Search + Add */}
       <Box
         sx={{
           display: "flex",
@@ -119,16 +80,24 @@ const Company = () => {
           mb: 3,
           flexWrap: "wrap",
           gap: 2,
-         
-           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+          backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
         }}
       >
-        <TextField
+        <TextField  
           placeholder="Search"
+          variant="outlined"
           size="small"
-          sx={{ flex: 1, minWidth: 200 }}
-        />
+          value ={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
 
+          sx={{
+            flex: 1,
+            minWidth: 200,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: 3,
+            },
+          }}
+        />
         <Button
           component={Link}
           to="/Company/add"
@@ -139,28 +108,59 @@ const Company = () => {
         </Button>
       </Box>
 
-      <TableContainer component={Paper} sx={{ borderRadius: 2,  backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f", }}>
+      {/* Main Table */}
+      <TableContainer
+        component={Paper}
+        sx={{
+          mb: 2,
+          borderRadius: 2,
+          overflowX: "auto",
+          backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+        }}
+      >
         <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>#</TableCell>
-              <TableCell>Company Name</TableCell>
-              <TableCell>Head Office Address</TableCell>
-              <TableCell>Contact No</TableCell>
-              <TableCell>Registration Date</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Action</TableCell>
-            </TableRow>
-          </TableHead>
+<TableHead>
+  <TableRow>
+    <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+      #
+    </TableCell>
+    <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+      Company Name
+    </TableCell>
+    <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+      Head Office Address
+    </TableCell>
+    <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+      Contact No
+    </TableCell>
+    <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+      Registration Date
+    </TableCell>
+    <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+      Email Address
+    </TableCell>
+    <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+      Action
+    </TableCell>
+  </TableRow>
+</TableHead>
           <TableBody>
             {currentCompanies.map((company) => (
-              <TableRow key={company.id}>
-                <TableCell>{company.id}</TableCell>
-                <TableCell>{company.name}</TableCell>
-                <TableCell>{company.address}</TableCell>
-                <TableCell>{company.contact}</TableCell>
-                <TableCell>{company.Registration}</TableCell>
-                <TableCell>{company.Email}</TableCell>
+              <TableRow
+                key={company.id}
+                sx={{
+                  "&:hover": {
+                    backgroundColor:
+                      theme.palette.mode === "light" ? "#f5f5f5" : "#2c2c3e",
+                  },
+                }}
+              >
+      <TableCell>{company.id}</TableCell>
+      <TableCell>{company.name}</TableCell>
+      <TableCell>{company.address}</TableCell>
+      <TableCell>{company.contact}</TableCell>
+      <TableCell>{company.Registration}</TableCell>
+      <TableCell>{company.Email}</TableCell>
                 <TableCell>
                   <IconButton
                     size="small"
@@ -170,7 +170,6 @@ const Company = () => {
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
-
                   <IconButton
                     size="small"
                     color="error"
@@ -185,12 +184,14 @@ const Company = () => {
         </Table>
       </TableContainer>
 
+      {/* Pagination */}
       {pageCount > 1 && (
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 4 }}>
           <Pagination
             count={pageCount}
             page={page}
             onChange={handleChange}
+            color="primary"
           />
         </Box>
       )}
@@ -231,7 +232,6 @@ const Company = () => {
     </Table>
   </TableContainer>
 </Box>
-
     </Box>
   );
 };

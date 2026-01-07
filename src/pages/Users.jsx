@@ -14,46 +14,38 @@ import {
   IconButton,
   Pagination,
   useTheme,
-  Grid,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {Link} from "react-router-dom"
-
+import { Link } from "react-router-dom";
+import { useUsers } from "../context/UsersContext"; 
 
 const STATUS_IMAGE_MAP = {
-  online: "/assets/driver/offline.png",
-  offline: "/assets/driver/online.png",
-
+  online: "/assets/driver/online.png",
+  offline: "/assets/driver/offline.png",
 };
 
+const PAGE_SIZE = 4;
 
-const allusers = [
-  { id: 1, name: "Allley", lastname: "jhone", contact: "+00*******",Email:"AlleyJhone", license:"0947563",status:"online" },
-  { id: 2, name: "Allley", lastname: "jhone", contact: "+00*******",Email:"AlleyJhone",license:"0947563",status:"online" },
-  { id: 3, name: "Allley", lastname: "jhone", contact: "+00*******",Email:"AlleyJhone",license:"0947563",status:"offline" },
-  { id: 4, name: "Allley", lastname: "jhone", contact: "+00*******",Email:"AlleyJhone",license:"0947563",status:"online" },
-  { id: 5, name: "Allley", lastname: "jhone", contact: "+00*******",Email:"AlleyJhone",license:"0947563",status:"offline" },
-  { id: 6, name: "Allley", lastname: "jhone", contact: "+00*******",Email:"AlleyJhone",license:"0947563",status:"online" },
-  // add more as needed
-];
-
-const PAGE_SIZE = 4; // show 4 countries per page
 const User = () => {
   const theme = useTheme();
-
-  const [users , setUsers] = useState(allusers)
+  
+  // GET DATA FROM CONTEXT
+  const { users, deleteUser } = useUsers();
+  
   const [page, setPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState(""); //  SEARCH STATE
 
- const handleDelete = (id) => {
+  const handleDelete = (id) => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this line?" // Fixed: Changed "company" to "line"
+      "Are you sure you want to delete this user?"
     );
     if (!confirmed) return;
 
-    setLines((prev) => prev.filter((l) => l.id !== id));
+    // USE CONTEXT FUNCTION
+    deleteUser(id);
 
-    if ((page - 1) * PAGE_SIZE >= user.length - 1) {
+    if ((page - 1) * PAGE_SIZE >= users.length - 1) {
       setPage((p) => Math.max(p - 1, 1));
     }
   };
@@ -62,29 +54,31 @@ const User = () => {
     setPage(value);
   };
 
-
-  // calculate current page data
-  const currentuser = allusers.slice(
-    (page - 1) * PAGE_SIZE ,
-    page * PAGE_SIZE
+  // ADD SEARCH FUNCTIONALITY
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.lastname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.Email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.contact.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.license.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const pageCount = Math.ceil(allusers.length / PAGE_SIZE);
+  const currentUsers = filteredUsers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const pageCount = Math.ceil(filteredUsers.length / PAGE_SIZE);
 
   return (
-   
     <Box sx={{ width: "100%" }}>
-      {/* Header */}
+      
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="600">
           Driver
         </Typography>
-        <Typography variant="body2" color="text.Secondary">
+        <Typography variant="body2" color="textSecondary">
           Information about your current plan and usages
         </Typography>
       </Box>
 
-      {/* Search + Add */}
+    
       <Box
         sx={{
           display: "flex",
@@ -94,17 +88,22 @@ const User = () => {
           flexWrap: "wrap",
           gap: 2,
           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
-          
         }}
       >
-      
         <TextField
           placeholder="Search"
           variant="outlined"
           size="small"
-          sx={{ flex: 1, minWidth: 200, "& .MuiOutlinedInput-root": {
-            borderRadius: 3,
-          }, }}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          
+          sx={{
+            flex: 1,
+            minWidth: 200,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: 3,
+            },
+          }}
         />
         <Button
           component={Link}
@@ -123,7 +122,6 @@ const User = () => {
           mb: 2,
           borderRadius: 2,
           overflowX: "auto",
-         
           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
         }}
       >
@@ -137,7 +135,7 @@ const User = () => {
                 First Name
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-               Last Name
+                Last Name
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 Contact No
@@ -145,7 +143,7 @@ const User = () => {
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 Email
               </TableCell>
-               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 License No
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
@@ -154,11 +152,10 @@ const User = () => {
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 Action
               </TableCell>
-               
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentuser.map((user) => (
+            {currentUsers.map((user) => (
               <TableRow
                 key={user.id}
                 sx={{
@@ -171,39 +168,34 @@ const User = () => {
                 <TableCell>{user.id}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.lastname}</TableCell>
-                <TableCell>{user.contact}</TableCell>                
+                <TableCell>{user.contact}</TableCell>
                 <TableCell>{user.Email}</TableCell>
                 <TableCell>{user.license}</TableCell>
-                
                 <TableCell>
-  <Box
-    component="img"
-    src={STATUS_IMAGE_MAP[user.status]}
-    alt={user.status}
-    sx={{
-      width: 48,
-      height: 48,
-      objectFit: "contain",
-    }}
-  />
-</TableCell>
-
-
+                  <Box
+                    component="img"
+                    src={STATUS_IMAGE_MAP[user.status]}
+                    alt={user.status}
+                    sx={{
+                      width: 48,
+                      height: 48,
+                      objectFit: "contain",
+                    }}
+                  />
+                </TableCell>
                 <TableCell>
-                  <IconButton 
-                  size="small" 
-                  color="primary"
-                  component={Link}
-                  to={`/Users/edit/${user.id}`}
-                  
-
+                  <IconButton
+                    size="small"
+                    color="primary"
+                    component={Link}
+                    to={`/Users/edit/${user.id}`}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
-                  <IconButton 
-                  size="small" 
-                  color="error"
-                  onClick={() => handleDelete(user.id)}
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={() => handleDelete(user.id)}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
@@ -214,7 +206,7 @@ const User = () => {
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
+      {/* Pagination - Same as Company */}
       {pageCount > 1 && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 4 }}>
           <Pagination
@@ -222,12 +214,11 @@ const User = () => {
             page={page}
             onChange={handleChange}
             color="primary"
-            
           />
         </Box>
       )}
 
-      {/* driver Display List (optional) */}
+      {/* Driver Display List - Same structure as Company */}
       <Box>
         <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
           Users Display
@@ -244,21 +235,22 @@ const User = () => {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ width: 50 }}>#</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>List</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+                  List
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {currentuser.map((user) => (
-                <TableRow  key={user.id}>
-                  <TableCell >{user.id}</TableCell>
-                  <TableCell>{user.name}</TableCell>
+              {currentUsers.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>{user.id}</TableCell>
+                  <TableCell>{user.name} {user.lastname}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Box>
-      
     </Box>
   );
 };

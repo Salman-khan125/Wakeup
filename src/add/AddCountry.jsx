@@ -1,15 +1,37 @@
 import React, { useState } from 'react';
-import { Box, Typography, TextField, Button, Grid, Paper, useTheme } from "@mui/material";
+import { 
+    Box, 
+    Typography, 
+    TextField, 
+    Button, 
+    Grid, 
+    Paper, 
+    useTheme,
+    MenuItem,
+    Select,
+    FormControl 
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useCountries } from "../context/CountryContext";
+
+const REGION_OPTIONS = [
+  { value: "Region", label: "Region" },
+  { value: "District", label: "District" },
+  { value: "City", label: "City" },
+  { value: "State", label: "State" },
+  { value: "Province", label: "Province" },
+];
 
 const AddCountry = () => {
     const theme = useTheme();
     const navigate = useNavigate();
     
-    // State for form fields based on Country.jsx data structure
+    const { addCountry } = useCountries();
+    
     const [form, setForm] = useState({
-        country: "",
+        name: "",
         code: "",
+        region: "Region",
     });
 
     const handleChange = (e) => {
@@ -18,15 +40,7 @@ const AddCountry = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
-        // Here you would normally:
-        // 1. Save to your state/context
-        // 2. Or send to an API
-        // 3. Generate a new ID
-        
-        console.log("Country data to add:", form);
-        
-        // For now, just show success and navigate back
+        addCountry(form);
         alert("Country added successfully!");
         navigate("/Country");
     };
@@ -42,7 +56,6 @@ const AddCountry = () => {
                     backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
                 }}
             >
-                {/* Title */}
                 <Typography variant="h6" fontWeight={600}>
                     Add Country
                 </Typography>
@@ -55,21 +68,18 @@ const AddCountry = () => {
                     Add a new country to your system
                 </Typography>
 
-                {/* Form */}
                 <form onSubmit={handleSubmit}>
-                    {/* Form Fields */}
                     <Grid container spacing={3}>
-                        {/* Country Name */}
                         <Grid item xs={12} md={6}>
                             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
                                 Country Name
                             </Typography>
                             <TextField
                                 fullWidth
-                                name="country"
-                                value={form.country}
+                                name="name"
+                                value={form.name}
                                 onChange={handleChange}
-                                placeholder="e.g., Ethiopia"
+                                placeholder="e.g., London"
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: 3,
@@ -78,7 +88,6 @@ const AddCountry = () => {
                             />
                         </Grid>
 
-                        {/* ISO or Internal Code */}
                         <Grid item xs={12} md={6}>
                             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
                                 Country Code
@@ -88,7 +97,7 @@ const AddCountry = () => {
                                 name="code"
                                 value={form.code}
                                 onChange={handleChange}
-                                placeholder="e.g., ET"
+                                placeholder="e.g., SL"
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: 3,
@@ -96,9 +105,27 @@ const AddCountry = () => {
                                 }}
                             />
                         </Grid>
+
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                                Geographic Region
+                            </Typography>
+                            <FormControl fullWidth sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }}>
+                                <Select
+                                    name="region"
+                                    value={form.region}
+                                    onChange={handleChange}
+                                >
+                                    {REGION_OPTIONS.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
                     </Grid>
 
-                    {/* Submit Button */}
                     <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
                         <Button
                             type="submit"

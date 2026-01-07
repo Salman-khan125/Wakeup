@@ -7,18 +7,20 @@ import {
   Paper,
   Grid,
   useTheme,
+  MenuItem,
+  Select,
+  FormControl,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
+import { useCountries } from "../context/CountryContext";
 
-// Define countries data (copy from your Country.jsx)
-const allCountries = [
-  { id: 1, country: "Ethiopia", code: "ET", region: "region" },
-  { id: 2, country: "Kenya", code: "KE", region: "regio" },
-  { id: 3, country: "Sudan", code: "SD", region: "region" },
-  { id: 4, country: "Somalia", code: "SO", region: "region" },
-  { id: 5, country: "Eritrea", code: "ER", region: "region" },
-  { id: 6, country: "Djibouti", code: "DJ", region: "region" },
-  // Add more countries as needed
+// Region options for dropdown
+const REGION_OPTIONS = [
+  { value: "Region", label: "Region" },
+  { value: "District", label: "District" },
+  { value: "City", label: "City" },
+  { value: "State", label: "State" },
+  { value: "Province", label: "Province" },
 ];
 
 const EditCountry = () => {
@@ -26,25 +28,77 @@ const EditCountry = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   
-  // Local state for countries
-  const [countries, setCountries] = useState(allCountries);
+  console.log("=== DEBUG EDITCOUNTRY ===");
+  console.log("Country ID from URL:", id);
   
-  // Find the country to edit
+  // Add error handling for the hook
+  let countries, updateCountry;
+  
+  try {
+    const context = useCountries();
+    countries = context.countries;
+    updateCountry = context.updateCountry;
+    console.log("Countries from context:", countries);
+    console.log("Is countries an array?", Array.isArray(countries));
+    console.log("Countries length:", countries?.length);
+  } catch (error) {
+    console.error("ERROR in useCountries():", error.message);
+    return (
+      <Box sx={{ p: 3 }}>
+        <Typography variant="h6" color="error">
+          Context Error: {error.message}
+        </Typography>
+        <Typography variant="body2">
+          This means CountryProvider is not properly set up in main.jsx
+        </Typography>
+        <Button 
+          variant="contained" 
+          onClick={() => navigate("/Country")}
+          sx={{ mt: 2 }}
+        >
+          Back to Countries
+        </Button>
+      </Box>
+    );
+  }
+  
+  // Add safety check
+  if (!countries || !Array.isArray(countries)) {
+    console.error("Countries is not an array:", countries);
+    return (
+      <Box sx={{ p: 3 }}>
+        <Typography variant="h6" color="error">
+          Data Error: Countries data is not available
+        </Typography>
+        <Typography variant="body2">
+          countries is: {typeof countries}
+        </Typography>
+        <Button 
+          variant="contained" 
+          onClick={() => navigate("/Country")}
+          sx={{ mt: 2 }}
+        >
+          Back to Countries
+        </Button>
+      </Box>
+    );
+  }
+  
   const country = countries.find((c) => c.id === Number(id));
+  console.log("Found country:", country);
 
   const [form, setForm] = useState({
-    country: "",
+    name: "",
     code: "",
-    region:"",
+    region: "Region",
   });
 
-  // Initialize form when country is found
   useEffect(() => {
     if (country) {
       setForm({
-        country: country.country || "",
+        name: country.name || "",
         code: country.code || "",
-        region:country.region || "",
+        region: country.region || "Region",
       });
     }
   }, [country]);
@@ -53,7 +107,10 @@ const EditCountry = () => {
     return (
       <Box sx={{ p: 3 }}>
         <Typography variant="h6" color="error">
-          Country not found
+          Country not found (ID: {id})
+        </Typography>
+        <Typography variant="body2">
+          Available IDs: {countries.map(c => c.id).join(", ")}
         </Typography>
         <Button 
           variant="contained" 
@@ -72,15 +129,8 @@ const EditCountry = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Update the country in local state
-    setCountries((prev) =>
-      prev.map((c) =>
-        c.id === country.id ? { ...c, ...form } : c
-      )
-    );
-
-    // Navigate back to countries list
+    updateCountry(country.id, form);
+    alert("Country updated successfully!");
     navigate("/Country");
   };
 
@@ -96,7 +146,7 @@ const EditCountry = () => {
         }}
       >
         <Typography variant="h5" mb={2}>
-          Edit Country
+          Edit Country: {country.name}
         </Typography>
         
         <form onSubmit={handleSubmit}>
@@ -107,8 +157,8 @@ const EditCountry = () => {
               </Typography>
               <TextField 
                 fullWidth 
-                name="country"
-                value={form.country}
+                name="name"
+                value={form.name}
                 onChange={handleChange}
                 placeholder="Country Name" 
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
@@ -124,25 +174,29 @@ const EditCountry = () => {
                 name="code"
                 value={form.code}
                 onChange={handleChange}
-                placeholder="Country Code (e.g., ET)" 
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
-              />
-            </Grid>
-            
-             <Grid item xs={12} md={6}>
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Geographic Region Or area
-              </Typography>
-              <TextField 
-                fullWidth 
-                name="region"
-                value={form.region}
-                onChange={handleChange}
-                placeholder="Country Code (e.g., ET)" 
+                placeholder="Country Code (e.g., SL)" 
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
               />
             </Grid>
 
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                Geographic Region
+              </Typography>
+              <FormControl fullWidth sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }}>
+                <Select
+                  name="region"
+                  value={form.region}
+                  onChange={handleChange}
+                >
+                  {REGION_OPTIONS.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
 
           <Box sx={{ mt: 4, display: "flex", gap: 2 }}>

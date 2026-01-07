@@ -18,30 +18,23 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Link } from "react-router-dom";
+import { useStops } from "../context/StopContext"; // IMPORT CONTEXT
 
 const STATUS_IMAGE_MAP = {
   Frame1: "/assets/stop/Frame1.png",
   Frame2: "/assets/stop/Frame2.png",
 };
 
-// Fixed: Changed to camelCase for consistency
-const allStops = [
-  { id: 1, name: "Daroukhane", Latitude: "14.749862", longitude: "14.7498674", city: "New York", qr: "Frame1" },
-  { id: 2, name: "Daroukhane", Latitude: "14.749862", longitude: "14.7498674", city: "New York", qr: "Frame2" },
-  { id: 3, name: "Daroukhane", Latitude: "14.749862", longitude: "14.7498674", city: "New York", qr: "Frame1" },
-  { id: 4, name: "Daroukhane", Latitude: "14.749862", longitude: "14.7498674", city: "New York", qr: "Frame1" },
-  { id: 5, name: "Daroukhane", Latitude: "14.749862", longitude: "14.7498674", city: "New York", qr: "Frame2" },
-  { id: 6, name: "Daroukhane", Latitude: "14.749862", longitude: "14.7498674", city: "New York", qr: "Frame1" },
-];
-
 const PAGE_SIZE = 4;
 
 const Stop = () => {
   const theme = useTheme();
   
-  // Fixed: Use camelCase for state variable
-  const [stops, setStops] = useState(allStops);
+  // GET DATA FROM CONTEXT
+  const { stops, deleteStop } = useStops();
+  
   const [page, setPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState(""); // ADD SEARCH STATE
 
   const handleDelete = (id) => {
     const confirmed = window.confirm(
@@ -49,8 +42,8 @@ const Stop = () => {
     );
     if (!confirmed) return;
 
-    // Fixed: Changed setLines to setStops
-    setStops((prev) => prev.filter((s) => s.id !== id));
+    // USE CONTEXT FUNCTION
+    deleteStop(id);
 
     if ((page - 1) * PAGE_SIZE >= stops.length - 1) {
       setPage((p) => Math.max(p - 1, 1));
@@ -61,13 +54,20 @@ const Stop = () => {
     setPage(value);
   };
 
-  // Fixed: Use state variable 'stops' instead of 'allstop'
-  const currentStops = stops.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const pageCount = Math.ceil(stops.length / PAGE_SIZE);
+  // ADD SEARCH FUNCTIONALITY
+  const filteredStops = stops.filter(stop =>
+    stop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    stop.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    stop.Latitude.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    stop.longitude.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const currentStops = filteredStops.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const pageCount = Math.ceil(filteredStops.length / PAGE_SIZE);
 
   return (
     <Box sx={{ width: "100%" }}>
-      {/* Header */}
+      {/* Header - Same structure as Company */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="600">
           Stop
@@ -77,7 +77,7 @@ const Stop = () => {
         </Typography>
       </Box>
 
-      {/* Search + Add */}
+      {/* Search + Add - Same structure as Company */}
       <Box
         sx={{
           display: "flex",
@@ -93,6 +93,8 @@ const Stop = () => {
           placeholder="Search"
           variant="outlined"
           size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
           sx={{
             flex: 1,
             minWidth: 200,
@@ -111,7 +113,7 @@ const Stop = () => {
         </Button>
       </Box>
 
-      {/* Main Table */}
+      {/* Main Table - Same structure */}
       <TableContainer
         component={Paper}
         sx={{
@@ -148,7 +150,6 @@ const Stop = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* Fixed: Changed variable name from 'Stop' to 'stop' (lowercase) */}
             {currentStops.map((stop) => (
               <TableRow
                 key={stop.id}
@@ -165,7 +166,6 @@ const Stop = () => {
                 <TableCell>{stop.longitude}</TableCell>
                 <TableCell>{stop.city}</TableCell>
                 <TableCell>
-                  {/* Fixed: Changed from STATUS_IMAGE_MAP[Stop.status] to STATUS_IMAGE_MAP[stop.qr] */}
                   <Box
                     component="img"
                     src={STATUS_IMAGE_MAP[stop.qr]}
@@ -182,14 +182,14 @@ const Stop = () => {
                     size="small"
                     color="primary"
                     component={Link}
-                    to={`/Stop/edit/${stop.id}`} // Fixed: Changed from 'stop.id' to 'stop.id'
+                    to={`/Stop/edit/${stop.id}`}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton
                     size="small"
                     color="error"
-                    onClick={() => handleDelete(stop.id)} // Fixed: Changed from 'stop.id' to 'stop.id'
+                    onClick={() => handleDelete(stop.id)}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
@@ -200,7 +200,7 @@ const Stop = () => {
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
+      {/* Pagination - Same as Company */}
       {pageCount > 1 && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 4 }}>
           <Pagination
@@ -212,7 +212,7 @@ const Stop = () => {
         </Box>
       )}
 
-      {/* Stop Display List */}
+      {/* Stop Display List - Same structure as Company */}
       <Box>
         <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
           Stop Display
@@ -235,7 +235,6 @@ const Stop = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {/* Fixed: Changed variable name from 'Stop' to 'stop' (lowercase) */}
               {currentStops.map((stop) => (
                 <TableRow key={stop.id}>
                   <TableCell>{stop.id}</TableCell>

@@ -12,32 +12,21 @@ import {
   FormControl,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
+import { useUsers } from "../context/UsersContext";
 
-// Same data as in Users.jsx
-const allUsers = [
-  { id: 1, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "online" },
-  { id: 2, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "online" },
-  { id: 3, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "offline" },
-  { id: 4, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "online" },
-  { id: 5, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "offline" },
-  { id: 6, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "online" },
-];
-
-// Status options for dropdown
+// Status options
 const STATUS_OPTIONS = [
   { value: "online", label: "Online" },
   { value: "offline", label: "Offline" },
 ];
 
-const EditUsers = () => {
+const EditUser = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
   
-  // Local state for users
-  const [users, setUsers] = useState(allUsers);
+  const { users, updateUser } = useUsers();
   
-  // Find the user to edit
   const user = users.find((u) => u.id === Number(id));
 
   const [form, setForm] = useState({
@@ -49,7 +38,6 @@ const EditUsers = () => {
     status: "online",
   });
 
-  // Initialize form when user is found
   useEffect(() => {
     if (user) {
       setForm({
@@ -86,101 +74,103 @@ const EditUsers = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Update the user in local state
-    setUsers((prev) =>
-      prev.map((u) =>
-        u.id === user.id ? { ...u, ...form } : u
-      )
-    );
-
-    // Navigate back to users list
+    updateUser(user.id, form);
     navigate("/Users");
   };
 
   return (
     <Box sx={{ width: "100%" }}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h5" fontWeight="600">
+          Edit User
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          Edit user information
+        </Typography>
+      </Box>
+
       <Paper
         elevation={0}
         sx={{
-          mt: 4,
           p: { xs: 2, md: 3 },
           borderRadius: 3,
           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
         }}
       >
-        <Typography variant="h5" mb={2}>
-          Edit User
-        </Typography>
-        
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                First Name
+                First Name *
               </Typography>
               <TextField 
                 fullWidth 
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                placeholder="First Name" 
+                placeholder="Enter first name"
+                required 
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
               />
             </Grid>
 
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Last Name
+                Last Name *
               </Typography>
               <TextField 
                 fullWidth 
                 name="lastname"
                 value={form.lastname}
                 onChange={handleChange}
-                placeholder="Last Name" 
+                placeholder="Enter last name"
+                required 
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
               />
             </Grid>
 
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Contact Number
+                Contact No *
               </Typography>
               <TextField 
                 fullWidth 
                 name="contact"
                 value={form.contact}
                 onChange={handleChange}
-                placeholder="+00*******" 
+                placeholder="Enter contact number"
+                required 
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
               />
             </Grid>
 
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Email Address
+                Email Address *
               </Typography>
               <TextField 
                 fullWidth 
                 name="Email"
+                type="email"
                 value={form.Email}
                 onChange={handleChange}
-                placeholder="Email" 
+                placeholder="Enter email address"
+                required 
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
               />
             </Grid>
 
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                License Number
+                License No *
               </Typography>
               <TextField 
                 fullWidth 
                 name="license"
                 value={form.license}
                 onChange={handleChange}
-                placeholder="License Number" 
+                placeholder="Enter license number"
+                required 
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
               />
             </Grid>
@@ -194,7 +184,7 @@ const EditUsers = () => {
                   name="status"
                   value={form.status}
                   onChange={handleChange}
-                  displayEmpty
+                  sx={{ borderRadius: 3 }}
                 >
                   {STATUS_OPTIONS.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -206,13 +196,24 @@ const EditUsers = () => {
             </Grid>
           </Grid>
 
-          <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
-            <Button type="submit" variant="contained">
+          <Box sx={{ 
+            mt: 4, 
+            display: "flex", 
+            gap: 2,
+            pt: 2,
+            borderTop: `1px solid ${theme.palette.mode === 'light' ? '#e0e0e0' : '#333'}` 
+          }}>
+            <Button 
+              type="submit" 
+              variant="contained"
+              sx={{ borderRadius: 3, px: 4, py: 1 }}
+            >
               Update User
             </Button>
             <Button 
               variant="outlined" 
               onClick={() => navigate("/Users")}
+              sx={{ borderRadius: 3, px: 4, py: 1 }}
             >
               Cancel
             </Button>
@@ -223,4 +224,4 @@ const EditUsers = () => {
   );
 };
 
-export default EditUsers;
+export default EditUser;

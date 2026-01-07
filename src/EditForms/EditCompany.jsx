@@ -9,44 +9,33 @@ import {
   useTheme,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-
-// Define companies data inside the component
-const allCompanies = [
-  { id: 1, name: "Company 1", address: "Address 1", contact: "123456", Email: "company1@test.com", registration:"02/05/2025" },
-  { id: 2, name: "Company 2", address: "Address 2", contact: "654321", Email: "company2@test.com", registration:"02/05/2025" },
-  // Add more companies as needed
-];
+import { useCompanies } from "../context/CompanyContext";
 
 const EditCompany = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
   
-  // Local state for companies
-  const [companies, setCompanies] = useState(allCompanies);
+  const { companies, updateCompany } = useCompanies();
   
-  // Find the company to edit
   const company = companies.find((c) => c.id === Number(id));
 
   const [form, setForm] = useState({
     name: "",
     address: "",
     contact: "",
+    Registration: "",
     Email: "",
-    registration: ""
   });
 
-  // Initialize form when company is found
   useEffect(() => {
     if (company) {
       setForm({
         name: company.name || "",
         address: company.address || "",
         contact: company.contact || "",
+        Registration: company.Registration || "",
         Email: company.Email || "",
-        registration: company.registration || ""
-
-      
       });
     }
   }, [company]);
@@ -74,15 +63,8 @@ const EditCompany = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Update the company in local state
-    setCompanies((prev) =>
-      prev.map((c) =>
-        c.id === company.id ? { ...c, ...form } : c
-      )
-    );
-
-    // Navigate back to companies list
+    updateCompany(company.id, form);
+    alert("Company updated successfully!");
     navigate("/Company");
   };
 
@@ -147,6 +129,20 @@ const EditCompany = () => {
 
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                Registration Date
+              </Typography>
+              <TextField 
+                fullWidth 
+                name="Registration"
+                value={form.Registration}
+                onChange={handleChange}
+                placeholder="DD/MM/YYYY" 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
                 Email Address
               </Typography>
               <TextField 
@@ -158,25 +154,11 @@ const EditCompany = () => {
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
               />
             </Grid>
-
-             <Grid item xs={12} md={6}>
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Registration Date
-              </Typography>
-              <TextField 
-                fullWidth 
-                name="registration"
-                value={form.registration}
-                onChange={handleChange}
-                placeholder="Registration Date" 
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
-              />
-            </Grid>
           </Grid>
 
           <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
             <Button type="submit" variant="contained">
-              Update
+              Update Company
             </Button>
             <Button 
               variant="outlined" 

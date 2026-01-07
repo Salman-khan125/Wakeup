@@ -1,141 +1,226 @@
-import React from 'react'
-import { Box, Typography, TextField, Button, Grid, Paper, useTheme } from "@mui/material";
+import React, { useState } from 'react';
+import { 
+    Box, 
+    Typography, 
+    TextField, 
+    Button, 
+    Grid, 
+    Paper, 
+    useTheme,
+    MenuItem,
+    Select,
+    FormControl 
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useDrivers } from "../context/DriverContext";
+
+// Status options for dropdown
+const STATUS_OPTIONS = [
+  { value: "online", label: "Online" },
+  { value: "offline", label: "Offline" },
+];
 
 const AddDriver = () => {
     const theme = useTheme();
-  return (
-    <box sx={{ width: "100%" }}>
-       <Paper
-        elevation={0}
-        sx={{
-          mt: 4,
-          p: { xs: 2, md: 3 },
-          borderRadius: 3,
-          backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
-        }}
-      >
-        {/* Title */}
-        <Typography variant="h6" fontWeight={600}>
-          Add Driver
-        </Typography>
+    const navigate = useNavigate();
+    
+    // Get addDriver function from context
+    const { addDriver } = useDrivers();
+    
+    // Form state
+    const [form, setForm] = useState({
+        name: "",
+        lastname: "",
+        contact: "",
+        Email: "",
+        license: "",
+        status: "online",
+    });
 
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ mt: 0.5, mb: 3 }}
-        >
-          Information about your current plan and usages
-        </Typography>
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
 
-       
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        addDriver(form);
+        alert("Driver added successfully!");
+        navigate("/Driver");
+    };
 
-        {/* Form Fields */}
-        <Grid container spacing={3}>
-          {/* Countrynumber */}
-          <Grid item xs={12} md={6}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-              First Name
-            </Typography>
-            <TextField
-              fullWidth
-              placeholder="Search"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 3,
-                },
-              }}
-            />
-          </Grid>
+    return (
+        <Box sx={{ width: "100%" }}> {/* Fixed: Box not box */}
+            <Paper
+                elevation={0}
+                sx={{
+                    mt: 4,
+                    p: { xs: 2, md: 3 },
+                    borderRadius: 3,
+                    backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+                }}
+            >
+                <Typography variant="h6" fontWeight={600}>
+                    Add Driver
+                </Typography>
 
-          {/* ISO or Internal Code */}
-          <Grid item xs={12} md={6}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-              Last Name
-            </Typography>
-            <TextField
-              fullWidth
-              placeholder="Search"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 3,
-                },
-              }}
-            />
-             
-             
+                <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 0.5, mb: 3 }}
+                >
+                    Add a new driver to your system
+                </Typography>
 
-          </Grid>
+                {/* Form with onSubmit handler */}
+                <form onSubmit={handleSubmit}>
+                    <Grid container spacing={3}>
+                        {/* First Name */}
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                                First Name
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                name="name"
+                                value={form.name}
+                                onChange={handleChange}
+                                placeholder="First Name"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 3,
+                                    },
+                                }}
+                            />
+                        </Grid>
 
-          {/* Geographic Region */}
-          <Grid item xs={12} md={6}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-            Phone  Number
-            </Typography>
-            <TextField
-              fullWidth
-              placeholder="Search"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 3,
-                },
-              }}
-            />
-             
+                        {/* Last Name */}
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                                Last Name
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                name="lastname"
+                                value={form.lastname}
+                                onChange={handleChange}
+                                placeholder="Last Name"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 3,
+                                    },
+                                }}
+                            />
+                        </Grid>
 
-          </Grid>
-           
-            <Grid item xs={12} md={6}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-             Email Address
-            </Typography>
-            <TextField
-              fullWidth
-              placeholder="Search"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 3,
-                },
-              }}
-            />
-             
+                        {/* Phone Number */}
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                                Phone Number
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                name="contact"
+                                value={form.contact}
+                                onChange={handleChange}
+                                placeholder="+00*******"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 3,
+                                    },
+                                }}
+                            />
+                        </Grid>
 
-          </Grid>
+                        {/* Email Address */}
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                                Email Address
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                name="Email"
+                                value={form.Email}
+                                onChange={handleChange}
+                                placeholder="Email"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 3,
+                                    },
+                                }}
+                            />
+                        </Grid>
 
-           <Grid item xs={12} md={6}>
-            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-              License Number
-            </Typography>
-            <TextField
-              fullWidth
-              placeholder="Search"
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 3,
-                },
-              }}
-            />
-             
+                        {/* License Number */}
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                                License Number
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                name="license"
+                                value={form.license}
+                                onChange={handleChange}
+                                placeholder="License Number"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 3,
+                                    },
+                                }}
+                            />
+                        </Grid>
 
-          </Grid>
-        </Grid>
+                        {/* Status (Dropdown) */}
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                                Status
+                            </Typography>
+                            <FormControl fullWidth sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }}>
+                                <Select
+                                    name="status"
+                                    value={form.status}
+                                    onChange={handleChange}
+                                >
+                                    {STATUS_OPTIONS.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
 
-        {/* Submit Button */}
-        <Box sx={{ mt: 4 }}>
-          <Button
-            variant="contained"
-            sx={{
-              textTransform: "none",
-              px: 4,
-              py: 1.2,
-              borderRadius: 2,
-            }}
-          >
-            Submit
-          </Button>
+                    {/* Submit Button */}
+                    <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            sx={{
+                                textTransform: "none",
+                                px: 4,
+                                py: 1.2,
+                                borderRadius: 2,
+                            }}
+                        >
+                            Add Driver
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            onClick={() => navigate("/Driver")}
+                            sx={{
+                                textTransform: "none",
+                                px: 4,
+                                py: 1.2,
+                                borderRadius: 2,
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                    </Box>
+                </form>
+            </Paper>
         </Box>
-      </Paper>
-    </box>
-  )
+    );
 }
 
-export default AddDriver
+export default AddDriver;

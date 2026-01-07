@@ -25,6 +25,7 @@ import AddCountry from "./add/AddCountry";
 import AddCompany from "./add/AddCompany";
 import AddBus from "./add/AddBus";
 import AddDriver from "./add/AddDriver";
+import AddLine from "./add/AddLine";
 import AddStop from "./add/AddStop";
 import AddUsers from "./add/AddUsers";
 import EditCompany from "./EditForms/EditCompany";
@@ -34,6 +35,7 @@ import EditDriver from "./EditForms/EditDriver";
 import EditLine from "./EditForms/EditLine";
 import EditStop from "./EditForms/EditStop";
 import EditUsers from "./EditForms/EditUsers";
+
 
 function App({ toggleTheme, mode }) {
   const theme = useTheme();
@@ -123,7 +125,7 @@ function App({ toggleTheme, mode }) {
           <Route path="/Driver/add" element={<AddDriver />} />
           <Route path="/Driver/edit/:id" element={<EditDriver />} />
           <Route path="/Line" element={<Line />} />
-
+          <Route path="/Line/add" element={<AddLine />} />
           <Route path="/Line/edit/:id" element={<EditLine />} />
 
           <Route path="/Stop" element={<Stop />} />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -11,10 +11,10 @@ import {
   Select,
   FormControl,
 } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useLines } from "../context/LineContext"; // IMPORT CONTEXT
 
-// Role options for dropdown (you can customize these)
+// Role options for dropdown
 const ROLE_OPTIONS = [
   { value: "Region", label: "Region" },
   { value: "District", label: "District" },
@@ -23,50 +23,18 @@ const ROLE_OPTIONS = [
   { value: "Manager", label: "Manager" },
 ];
 
-const EditLine = () => {
-  const { id } = useParams();
+const AddLine = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   
-  // GET CONTEXT FUNCTIONS (like Company edit would do)
-  const { lines, updateLine } = useLines();
+  // GET CONTEXT FUNCTION
+  const { addLine } = useLines();
   
-  // Find the line to edit from context
-  const line = lines.find((l) => l.id === Number(id));
-
   const [form, setForm] = useState({
     name: "",
     Email: "",
     Role: "Region",
   });
-
-  // Initialize form when line is found
-  useEffect(() => {
-    if (line) {
-      setForm({
-        name: line.name || "",
-        Email: line.Email || "",
-        Role: line.Role || "Region",
-      });
-    }
-  }, [line]);
-
-  if (!line) {
-    return (
-      <Box sx={{ p: 3 }}>
-        <Typography variant="h6" color="error">
-          Line not found
-        </Typography>
-        <Button 
-          variant="contained" 
-          onClick={() => navigate("/Line")}
-          sx={{ mt: 2 }}
-        >
-          Back to Lines
-        </Button>
-      </Box>
-    );
-  }
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -75,8 +43,8 @@ const EditLine = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // UPDATE LINE USING CONTEXT FUNCTION (like Company)
-    updateLine(line.id, form);
+    // ADD LINE USING CONTEXT FUNCTION
+    addLine(form);
 
     // Navigate back to lines list
     navigate("/Line");
@@ -84,13 +52,13 @@ const EditLine = () => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      {/* Header - Same structure as Company */}
+      {/* Header - Same structure */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="600">
-          Edit Line
+          Add New Line
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          Edit line information
+          Add new line information
         </Typography>
       </Box>
 
@@ -106,20 +74,18 @@ const EditLine = () => {
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Line Name
+                Line Name *
               </Typography>
               <TextField 
                 fullWidth 
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                placeholder="Enter line name" 
+                placeholder="Enter line name"
+                required 
                 sx={{ 
                   "& .MuiOutlinedInput-root": { 
                     borderRadius: 3,
-                    "&.Mui-focused": {
-                      borderColor: theme.palette.primary.main,
-                    }
                   } 
                 }} 
               />
@@ -127,20 +93,19 @@ const EditLine = () => {
 
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Email Address
+                Email Address *
               </Typography>
               <TextField 
                 fullWidth 
                 name="Email"
+                type="email"
                 value={form.Email}
                 onChange={handleChange}
-                placeholder="Enter email address" 
+                placeholder="Enter email address"
+                required 
                 sx={{ 
                   "& .MuiOutlinedInput-root": { 
                     borderRadius: 3,
-                    "&.Mui-focused": {
-                      borderColor: theme.palette.primary.main,
-                    }
                   } 
                 }} 
               />
@@ -153,16 +118,12 @@ const EditLine = () => {
               <FormControl fullWidth sx={{ 
                 "& .MuiOutlinedInput-root": { 
                   borderRadius: 3,
-                  "&.Mui-focused": {
-                    borderColor: theme.palette.primary.main,
-                  }
                 } 
               }}>
                 <Select
                   name="Role"
                   value={form.Role}
                   onChange={handleChange}
-                  displayEmpty
                   sx={{ borderRadius: 3 }}
                 >
                   {ROLE_OPTIONS.map((option) => (
@@ -175,7 +136,7 @@ const EditLine = () => {
             </Grid>
           </Grid>
 
-          {/* Action Buttons - Same style as Company */}
+          {/* Action Buttons */}
           <Box sx={{ 
             mt: 4, 
             display: "flex", 
@@ -192,7 +153,7 @@ const EditLine = () => {
                 py: 1
               }}
             >
-              Update Line
+              Add Line
             </Button>
             <Button 
               variant="outlined" 
@@ -212,4 +173,4 @@ const EditLine = () => {
   );
 };
 
-export default EditLine;
+export default AddLine;

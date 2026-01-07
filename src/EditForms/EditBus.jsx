@@ -10,24 +10,14 @@ import {
   MenuItem,
   Select,
   FormControl,
-  InputLabel,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-
-// Same data as in Bus.jsx
-const allBuses = [
-  { id: 1, number: "ale848", seat: "SL", model: "Region", status: "Active" },
-  { id: 2, number: "ale848", seat: "SL", model: "Region", status: "maintenance" },
-  { id: 3, number: "ale848", seat: "SL", model: "Region", status: "Out of Service" },
-  { id: 4, number: "ale848", seat: "SL", model: "Region", status: "Active" },
-  { id: 5, number: "ale848", seat: "SL", model: "Region", status: "Out of Service" },
-  { id: 6, number: "ale848", seat: "SL", model: "Region", status: "maintenance" },
-];
+import { useBuses } from "../context/BusContext"; // ADD THIS
 
 // Status options for dropdown
 const STATUS_OPTIONS = [
   { value: "Active", label: "Active" },
-  { value: "maintenance", label: "maintenance" },
+  { value: "Maintenance", label: "Maintenance" },
   { value: "Out of Service", label: "Out of Service" },
 ];
 
@@ -36,10 +26,9 @@ const EditBus = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   
-  // Local state for buses
-  const [buses, setBuses] = useState(allBuses);
+  // Get from context
+  const { buses, updateBus } = useBuses();
   
-  // Find the bus to edit
   const bus = buses.find((b) => b.id === Number(id));
 
   const [form, setForm] = useState({
@@ -49,7 +38,6 @@ const EditBus = () => {
     status: "Active",
   });
 
-  // Initialize form when bus is found
   useEffect(() => {
     if (bus) {
       setForm({
@@ -84,15 +72,8 @@ const EditBus = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Update the bus in local state
-    setBuses((prev) =>
-      prev.map((b) =>
-        b.id === bus.id ? { ...b, ...form } : b
-      )
-    );
-
-    // Navigate back to buses list
+    updateBus(bus.id, form);
+    alert("Bus updated successfully!");
     navigate("/Bus");
   };
 
@@ -164,7 +145,6 @@ const EditBus = () => {
                   name="status"
                   value={form.status}
                   onChange={handleChange}
-                  displayEmpty
                 >
                   {STATUS_OPTIONS.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -173,9 +153,6 @@ const EditBus = () => {
                   ))}
                 </Select>
               </FormControl>
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
-                • Active: Available • maintenance: In Transit • Out of Service: Maintenance
-              </Typography>
             </Grid>
           </Grid>
 

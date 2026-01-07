@@ -12,16 +12,7 @@ import {
   FormControl,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-
-// Same data as in Driver.jsx
-const allDrivers = [
-  { id: 1, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "online" },
-  { id: 2, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "online" },
-  { id: 3, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "offline" },
-  { id: 4, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "online" },
-  { id: 5, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "offline" },
-  { id: 6, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "online" },
-];
+import { useDrivers } from "../context/DriverContext"; // CHANGE THIS IMPORT
 
 // Status options for dropdown
 const STATUS_OPTIONS = [
@@ -34,10 +25,9 @@ const EditDriver = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   
-  // Local state for drivers
-  const [drivers, setDrivers] = useState(allDrivers);
+  // Get from context
+  const { drivers, updateDriver } = useDrivers();
   
-  // Find the driver to edit
   const driver = drivers.find((d) => d.id === Number(id));
 
   const [form, setForm] = useState({
@@ -49,7 +39,6 @@ const EditDriver = () => {
     status: "online",
   });
 
-  // Initialize form when driver is found
   useEffect(() => {
     if (driver) {
       setForm({
@@ -86,20 +75,13 @@ const EditDriver = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Update the driver in local state
-    setDrivers((prev) =>
-      prev.map((d) =>
-        d.id === driver.id ? { ...d, ...form } : d
-      )
-    );
-
-    // Navigate back to drivers list
+    updateDriver(driver.id, form);
+    alert("Driver updated successfully!");
     navigate("/Driver");
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+<Box sx={{ width: "100%" }}>
       <Paper
         elevation={0}
         sx={{
