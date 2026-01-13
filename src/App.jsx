@@ -14,6 +14,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 
 import Sidebar from "./components/layout/Sidebar";
+import Dashboard from "./pages/Dashboard";
 import Country from "./pages/Country";
 import Company from "./pages/Company"; // This component has its own data
 import Bus from "./pages/Bus";
@@ -111,7 +112,7 @@ function App({ toggleTheme, mode }) {
 
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<h1>Dashboard</h1>} />
+          <Route path="/dashboard" element={<Dashboard/>} />
           <Route path="/Country" element={<Country />} />
           <Route path="/Country/add" element={<AddCountry />} />
           <Route path="/Country/edit/:id" element={<EditCountry />} />

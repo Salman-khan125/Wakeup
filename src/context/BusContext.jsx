@@ -12,14 +12,15 @@ export const useBuses = () => {
 
 export const BusProvider = ({ children }) => {
   // Your bus data structure
-  const [buses, setBuses] = useState([
-    { id: 1, number: "ale848", seat: "SL", model: "Region", status: "green" },
-    { id: 2, number: "ale848", seat: "SL", model: "Region", status: "yellow" },
-    { id: 3, number: "ale848", seat: "SL", model: "Region", status: "orange" },
-    { id: 4, number: "ale848", seat: "SL", model: "Region", status: "green" },
-    { id: 5, number: "ale848", seat: "SL", model: "Region", status: "orange" },
-    { id: 6, number: "ale848", seat: "SL", model: "Region", status: "yellow" },
-  ]);
+const [buses, setBuses] = useState([
+  { id: 1, number: "ale848", seat: "SL", model: "Region", status: "active" },
+  { id: 2, number: "ale848", seat: "SL", model: "Region", status: "maintenance" },
+  { id: 3, number: "ale848", seat: "SL", model: "Region", status: "outofservice" },
+  { id: 4, number: "ale848", seat: "SL", model: "Region", status: "active" },
+  { id: 5, number: "ale848", seat: "SL", model: "Region", status: "outofservice" },
+  { id: 6, number: "ale848", seat: "SL", model: "Region", status: "maintenance" }, 
+]);
+
 
   const addBus = (newBus) => {
     const id = buses.length > 0 
