@@ -12,7 +12,7 @@ import { LineProvider } from "./context/LineContext";
 import { StopProvider } from "./context/StopContext";
 import {UsersProvider} from "./context/UsersContext";
 import { TripProvider } from "./context/TripContext";
-import { BusTripProvider } from "./context/BusTripContext";
+import { BusTripProvider } from "./context/BusTripContext.jsx";  // Add .jsx extension
 import { GeolocationProvider } from "./context/GeolocationContext";
 import { AlertProvider } from "./context/AlertContext";
 
