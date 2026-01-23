@@ -178,7 +178,7 @@ const Alert = () => {
                 Status
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Created At
+                Registration
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 Action
