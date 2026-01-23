@@ -7,23 +7,27 @@ import {
   Paper,
   Grid,
   useTheme,
+  MenuItem,
+  Select,
+  FormControl,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useLines } from "../context/LineContext";
+import { useBusTrips } from "../context/BusTripContext";
 
-const AddLine = () => {
+const AddBusTrip = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   
   // GET CONTEXT FUNCTION
-  const { addLine } = useLines();
+  const { addBusTrip } = useBusTrips();
   
-  // Updated form state with new field names
+  // Form state for BusTrip fields
   const [form, setForm] = useState({
-    line_name: "",
-    description: "",
-    distance_km: "",
-    id_company: "",
+    id_bus: "",
+    id_trip: "",
+    service_date: "",
+    actual_departure: "",
+    status: "in_service",
   });
 
   const handleChange = (e) => {
@@ -34,21 +38,35 @@ const AddLine = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log("Submitting line form:", form);
+    console.log("Submitting bus trip form:", form);
     
     // Validate required fields
-    if (!form.line_name || !form.distance_km) {
-      alert("Line Name and Distance are required!");
+    if (!form.id_bus || !form.id_trip || !form.service_date || !form.actual_departure || !form.status) {
+      alert("All fields are required!");
       return;
     }
     
-    // ADD LINE USING CONTEXT FUNCTION
-    addLine(form);
+    // Validate date format (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(form.service_date)) {
+      alert("Service date must be in YYYY-MM-DD format");
+      return;
+    }
     
-    alert("Line added successfully!");
+    // Validate time format (HH:MM)
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (!timeRegex.test(form.actual_departure)) {
+      alert("Departure time must be in HH:MM format (24-hour)");
+      return;
+    }
     
-    // Navigate back to lines list
-    navigate("/Line");
+    // ADD BUS TRIP USING CONTEXT FUNCTION
+    addBusTrip(form);
+    
+    alert("Bus trip added successfully!");
+    
+    // Navigate back to bus trips list
+    navigate("/BusTrip");
   };
 
   return (
@@ -56,10 +74,10 @@ const AddLine = () => {
       {/* Header - Same structure */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="600">
-          Add New Line
+          Add New Bus Trip
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          Add new line information
+          Add new bus trip information
         </Typography>
       </Box>
 
@@ -73,17 +91,18 @@ const AddLine = () => {
       >
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
-            {/* Line Name */}
+            {/* Bus ID */}
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Line Name *
+                Bus ID *
               </Typography>
               <TextField 
                 fullWidth 
-                name="line_name"  // Changed from "name"
-                value={form.line_name}
+                name="id_bus"
+                type="number"
+                value={form.id_bus}
                 onChange={handleChange}
-                placeholder="Enter line name"
+                placeholder="Enter bus ID"
                 required 
                 sx={{ 
                   "& .MuiOutlinedInput-root": { 
@@ -93,37 +112,18 @@ const AddLine = () => {
               />
             </Grid>
 
-            {/* Description */}
+            {/* Trip ID */}
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Description
+                Trip ID *
               </Typography>
               <TextField 
                 fullWidth 
-                name="description"  // Changed from "Email"
-                value={form.description}
-                onChange={handleChange}
-                placeholder="Enter line description"
-                sx={{ 
-                  "& .MuiOutlinedInput-root": { 
-                    borderRadius: 3,
-                  } 
-                }} 
-              />
-            </Grid>
-
-            {/* Distance (km) */}
-            <Grid item xs={12} md={6}>
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Distance (km) *
-              </Typography>
-              <TextField 
-                fullWidth 
-                name="distance_km"  // Changed from "Role"
+                name="id_trip"
                 type="number"
-                value={form.distance_km}
+                value={form.id_trip}
                 onChange={handleChange}
-                placeholder="Enter distance in km"
+                placeholder="Enter trip ID"
                 required 
                 sx={{ 
                   "& .MuiOutlinedInput-root": { 
@@ -133,28 +133,75 @@ const AddLine = () => {
               />
             </Grid>
 
-            {/* Company ID */}
+            {/* Service Date */}
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Company ID
+                Service Date *
               </Typography>
               <TextField 
                 fullWidth 
-                name="id_company"  // New field
-                type="number"
-                value={form.id_company}
+                name="service_date"
+                type="date"
+                value={form.service_date}
                 onChange={handleChange}
-                placeholder="Enter company ID"
+                required
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 sx={{ 
                   "& .MuiOutlinedInput-root": { 
                     borderRadius: 3,
                   } 
                 }} 
               />
+            </Grid>
+
+            {/* Actual Departure */}
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                Actual Departure *
+              </Typography>
+              <TextField 
+                fullWidth 
+                name="actual_departure"
+                value={form.actual_departure}
+                onChange={handleChange}
+                placeholder="HH:MM (24-hour format)"
+                required 
+                sx={{ 
+                  "& .MuiOutlinedInput-root": { 
+                    borderRadius: 3,
+                  } 
+                }} 
+              />
+            </Grid>
+
+            {/* Status */}
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                Status *
+              </Typography>
+              <FormControl fullWidth sx={{ 
+                "& .MuiOutlinedInput-root": { 
+                  borderRadius: 3,
+                } 
+              }}>
+                <Select
+                  name="status"
+                  value={form.status}
+                  onChange={handleChange}
+                  sx={{ borderRadius: 3 }}
+                  required
+                >
+                  <MenuItem value="in_service">In Service</MenuItem>
+                  <MenuItem value="paused">Paused</MenuItem>
+                  <MenuItem value="completed">Completed</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
 
-          {/* Action Buttons */}
+          {/* Action Buttons - Same structure */}
           <Box sx={{ 
             mt: 4, 
             display: "flex", 
@@ -171,11 +218,11 @@ const AddLine = () => {
                 py: 1
               }}
             >
-              Add Line
+              Add Bus Trip
             </Button>
             <Button 
               variant="outlined" 
-              onClick={() => navigate("/Line")}
+              onClick={() => navigate("/BusTrip")}
               sx={{
                 borderRadius: 3,
                 px: 4,
@@ -191,4 +238,4 @@ const AddLine = () => {
   );
 };
 
-export default AddLine;
+export default AddBusTrip;

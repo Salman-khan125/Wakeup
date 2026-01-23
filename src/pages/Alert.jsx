@@ -14,46 +14,35 @@ import {
   IconButton,
   Pagination,
   useTheme,
+  Chip,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import WarningIcon from "@mui/icons-material/Warning";
 import { Link } from "react-router-dom";
-import { useUsers } from "../context/UsersContext";
-
-// Updated status image map for new status values
-const STATUS_IMAGE_MAP = {
-  active: "/assets/driver/online.png",
-  inactive: "/assets/driver/offline.png",
-  suspended: "/assets/driver/offline.png",
-};
-
-// Gender display map
-const GENDER_DISPLAY = {
-  male: "Male",
-  female: "Female",
-  other: "Other",
-};
+import { useAlerts } from "../context/AlertContext";
 
 const PAGE_SIZE = 4;
 
-const User = () => {
+const Alert = () => {
   const theme = useTheme();
   
   // GET DATA FROM CONTEXT
-  const { users, deleteUser } = useUsers();
+  const { alerts, deleteAlert } = useAlerts();
   
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleDelete = (id) => {
+  const handleDelete = (id_alert) => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this user?"
+      "Are you sure you want to delete this alert?"
     );
     if (!confirmed) return;
 
-    deleteUser(id);
+    // USE CONTEXT FUNCTION
+    deleteAlert(id_alert);
 
-    if ((page - 1) * PAGE_SIZE >= users.length - 1) {
+    if ((page - 1) * PAGE_SIZE >= alerts.length - 1) {
       setPage((p) => Math.max(p - 1, 1));
     }
   };
@@ -62,44 +51,66 @@ const User = () => {
     setPage(value);
   };
 
-  // UPDATED SEARCH: Include latitude and longitude in search
-  const filteredUsers = users.filter(user => {
+  // Helper function to format timestamp
+  const formatDateTime = (dateTime) => {
+    if (!dateTime) return "N/A";
+    try {
+      const date = new Date(dateTime);
+      return date.toLocaleString();
+    } catch (error) {
+      return dateTime;
+    }
+  };
+
+  // Alert type display mapping
+  const ALERT_TYPE_DISPLAY = {
+    incident: { label: "Incident", color: "error" },
+    delay: { label: "Delay", color: "warning" },
+    breakdown: { label: "Breakdown", color: "error" },
+    other: { label: "Other", color: "info" },
+  };
+
+  // Status display mapping
+  const STATUS_DISPLAY = {
+    new: { label: "New", color: "warning" },
+    in_progress: { label: "In Progress", color: "info" },
+    resolved: { label: "Resolved", color: "success" },
+  };
+
+  // SEARCH FUNCTIONALITY
+  const filteredAlerts = alerts.filter(alert => {
     const searchLower = searchTerm.toLowerCase();
-    const fullName = user?.full_name?.toLowerCase() || '';
-    const phone = user?.phone?.toLowerCase() || '';
-    const gender = GENDER_DISPLAY[user?.gender]?.toLowerCase() || '';
-    const countryId = user?.id_country?.toString() || '';
-    const preferredLineId = user?.preferred_line_id?.toString() || '';
-    const status = user?.status?.toLowerCase() || '';
-    const latitude = user?.current_latitude?.toString() || '';
-    const longitude = user?.current_longitude?.toString() || '';
+    const busTripId = (alert.id_bus_trip || "").toString().toLowerCase();
+    const driverId = (alert.id_driver || "").toString().toLowerCase();
+    const alertType = (ALERT_TYPE_DISPLAY[alert.alert_type]?.label || "").toLowerCase();
+    const status = (STATUS_DISPLAY[alert.status]?.label || "").toLowerCase();
+    const message = (alert.message || "").toLowerCase();
+    const createdAt = formatDateTime(alert.created_at).toLowerCase();
     
-    return fullName.includes(searchLower) ||
-           phone.includes(searchLower) ||
-           gender.includes(searchLower) ||
-           countryId.includes(searchLower) ||
-           preferredLineId.includes(searchLower) ||
+    return busTripId.includes(searchLower) ||
+           driverId.includes(searchLower) ||
+           alertType.includes(searchLower) ||
            status.includes(searchLower) ||
-           latitude.includes(searchLower) ||
-           longitude.includes(searchLower);
+           message.includes(searchLower) ||
+           createdAt.includes(searchLower);
   });
 
-  const currentUsers = filteredUsers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const pageCount = Math.ceil(filteredUsers.length / PAGE_SIZE);
+  const currentAlerts = filteredAlerts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const pageCount = Math.ceil(filteredAlerts.length / PAGE_SIZE);
 
   return (
     <Box sx={{ width: "100%" }}>
-      {/* Header - Updated title */}
+      {/* Header - Same structure as Trip */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="600">
-          Users
+          Alert
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          Information about users in the system
+          Information about your current plan and usages
         </Typography>
       </Box>
 
-      {/* Search + Add */}
+      {/* Search + Add - Same structure as Trip */}
       <Box
         sx={{
           display: "flex",
@@ -127,7 +138,7 @@ const User = () => {
         />
         <Button
           component={Link}
-          to="/Users/add"
+          to="/Alert/add"
           variant="contained"
           sx={{ height: 40, borderRadius: 3 }}
         >
@@ -135,7 +146,7 @@ const User = () => {
         </Button>
       </Box>
 
-      {/* Main Table - Updated with new fields including location */}
+      {/* Main Table - Using Alert data */}
       <TableContainer
         component={Paper}
         sx={{
@@ -152,25 +163,16 @@ const User = () => {
                 #
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Full Name
+                Bus Trip ID
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Phone
+                Driver ID
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Gender
+                Alert Type
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Country ID
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Preferred Line ID
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Latitude
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Longitude
+                Message
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 Status
@@ -184,9 +186,9 @@ const User = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentUsers.map((user) => (
+            {currentAlerts.map((alert) => (
               <TableRow
-                key={user.id_user || user.id}
+                key={alert.id_alert}
                 sx={{
                   "&:hover": {
                     backgroundColor:
@@ -194,50 +196,64 @@ const User = () => {
                   },
                 }}
               >
-                <TableCell>{user.id_user || user.id || "N/A"}</TableCell>
-                <TableCell>{user.full_name || "N/A"}</TableCell>
-                <TableCell>{user.phone || "N/A"}</TableCell>
-                <TableCell>{GENDER_DISPLAY[user.gender] || "N/A"}</TableCell>
-                <TableCell>{user.id_country || "N/A"}</TableCell>
-                <TableCell>{user.preferred_line_id || "N/A"}</TableCell>
+                <TableCell>{alert.id_alert}</TableCell>
+                <TableCell>{alert.id_bus_trip}</TableCell>
+                <TableCell>{alert.id_driver}</TableCell>
                 <TableCell>
-                  {user.current_latitude ? parseFloat(user.current_latitude).toFixed(6) : "N/A"}
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <WarningIcon 
+                      sx={{ 
+                        fontSize: 16, 
+                        color: 
+                          alert.alert_type === "incident" || alert.alert_type === "breakdown" 
+                            ? "error.main" 
+                            : alert.alert_type === "delay" 
+                              ? "warning.main" 
+                              : "info.main" 
+                      }} 
+                    />
+                    <Chip
+                      label={ALERT_TYPE_DISPLAY[alert.alert_type]?.label || alert.alert_type}
+                      size="small"
+                      color={ALERT_TYPE_DISPLAY[alert.alert_type]?.color || "default"}
+                      variant="outlined"
+                    />
+                  </Box>
                 </TableCell>
                 <TableCell>
-                  {user.current_longitude ? parseFloat(user.current_longitude).toFixed(6) : "N/A"}
-                </TableCell>
-                <TableCell>
-                  <Box
-                    component="img"
-                    src={STATUS_IMAGE_MAP[user.status] || "/assets/driver/offline.png"}
-                    alt={user.status || "Status"}
-                    sx={{
-                      width: 48,
-                      height: 48,
-                      objectFit: "contain",
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      maxWidth: 200,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap"
                     }}
+                  >
+                    {alert.message}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Chip
+                    label={STATUS_DISPLAY[alert.status]?.label || alert.status}
+                    size="small"
+                    color={STATUS_DISPLAY[alert.status]?.color || "default"}
                   />
                 </TableCell>
-                <TableCell>
-                  {user.created_at ? (
-                    new Date(user.created_at).toLocaleDateString()
-                  ) : (
-                    "N/A"
-                  )}
-                </TableCell>
+                <TableCell>{formatDateTime(alert.created_at)}</TableCell>
                 <TableCell>
                   <IconButton
                     size="small"
                     color="primary"
                     component={Link}
-                    to={`/Users/edit/${user.id_user || user.id}`}
+                    to={`/Alert/edit/${alert.id_alert}`}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton
                     size="small"
                     color="error"
-                    onClick={() => handleDelete(user.id_user || user.id)}
+                    onClick={() => handleDelete(alert.id_alert)}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
@@ -248,7 +264,7 @@ const User = () => {
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
+      {/* Pagination - Same as Trip */}
       {pageCount > 1 && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 4 }}>
           <Pagination
@@ -260,10 +276,10 @@ const User = () => {
         </Box>
       )}
 
-      {/* Users Display List - Optional: Show location here too */}
+      {/* Alert Display List - Same structure as Trip */}
       <Box>
         <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
-          Users Display
+          Alert Display
         </Typography>
         <TableContainer
           component={Paper}
@@ -277,20 +293,20 @@ const User = () => {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ width: 50 }}>#</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                  Name
+                <TableCell
+                  sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+                >
+                  List
                 </TableCell>
-               
-                
               </TableRow>
             </TableHead>
             <TableBody>
-              {currentUsers.map((user) => (
-                <TableRow key={user.id_user || user.id}>
-                  <TableCell>{user.id_user || user.id || "N/A"}</TableCell>
-                  <TableCell>{user.full_name || "N/A"}</TableCell>
-                 
-                
+              {currentAlerts.map((alert) => (
+                <TableRow key={alert.id_alert}>
+                  <TableCell>{alert.id_alert}</TableCell>
+                  <TableCell>
+                    [{ALERT_TYPE_DISPLAY[alert.alert_type]?.label || alert.alert_type}] Bus Trip {alert.id_bus_trip} - {STATUS_DISPLAY[alert.status]?.label || alert.status}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -301,4 +317,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default Alert;

@@ -13,39 +13,45 @@ export const useDrivers = () => {
 export const DriverProvider = ({ children }) => {
   // Use lowercase 'drivers' for consistency
   const [drivers, setDrivers] = useState([
-    { id: 1, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "online" },
-    { id: 2, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "online" },
-    { id: 3, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "offline" },
-    { id: 4, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "online" },
-    { id: 5, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "offline" },
-    { id: 6, name: "Allley", lastname: "jhone", contact: "+00*******", Email: "AlleyJhone", license: "0947563", status: "online" },
+    { id_driver: 1, first_name: "Allley", lastname: "jhone", phone: "+00*******", Email: "AlleyJhone", password: "asd123", license: "0947563", is_online: "online", id_company: "FK", id_bus: "3" },
+    { id_driver: 2, first_name: "Allley", lastname: "jhone", phone: "+00*******", Email: "AlleyJhone", password: "asd123", license: "0947563", is_online: "online", id_company: "FK", id_bus: "3" },
+    { id_driver: 3, first_name: "Allley", lastname: "jhone", phone: "+00*******", Email: "AlleyJhone", password: "asd123", license: "0947563", is_online: "offline", id_company: "FK", id_bus: "3" },
+    { id_driver: 4, first_name: "Allley", lastname: "jhone", phone: "+00*******", Email: "AlleyJhone", password: "asd123", license: "0947563", is_online: "online", id_company: "FK", id_bus: "3" },
+    { id_driver: 5, first_name: "Allley", lastname: "jhone", phone: "+00*******", Email: "AlleyJhone", password: "asd123", license: "0947563", is_online: "offline", id_company: "FK", id_bus: "3" },
+    { id_driver: 6, first_name: "Allley", lastname: "jhone", phone: "+00*******", Email: "AlleyJhone", password: "asd123", license: "0947563", is_online: "online", id_company: "FK", id_bus: "3" },
   ]);
 
   const addDriver = (newDriver) => {
     const id = drivers.length > 0 
-      ? Math.max(...drivers.map(d => d.id)) + 1 
+      ? Math.max(...drivers.map(d => d.id_driver)) + 1 
       : 1;
     
-    setDrivers([...drivers, { ...newDriver, id }]);
+    setDrivers([...drivers, { ...newDriver, id_driver: id }]);
     console.log("Added driver:", newDriver);
   };
 
   const updateDriver = (id, updatedData) => {
+    console.log("updateDriver called - ID:", id, "Data:", updatedData);
+    
     setDrivers(prev => 
-      prev.map(driver =>  // lowercase 'driver'
-        driver.id === id ? { ...driver, ...updatedData } : driver
-      )
+      prev.map(driver => {
+        // Use == for comparison (string vs number)
+        if (driver.id_driver == id) {
+          console.log("Found driver to update:", driver);
+          return { ...driver, ...updatedData };
+        }
+        return driver;
+      })
     );
-    console.log("Updated driver ID:", id, "with data:", updatedData);
   };
 
   const deleteDriver = (id) => {
-    setDrivers(prev => prev.filter(driver => driver.id !== id));
+    setDrivers(prev => prev.filter(driver => driver.id_driver != id));
     console.log("Deleted driver ID:", id);
   };
 
   const value = {
-    drivers,  // lowercase - must match
+    drivers,
     addDriver,
     updateDriver,
     deleteDriver,

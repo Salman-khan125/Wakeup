@@ -17,26 +17,26 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import LockIcon from "@mui/icons-material/Lock";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { Link } from "react-router-dom";
-import { useDrivers  } from "../context/DriverContext"; // ADD THIS IMPORT
+import { useDrivers } from "../context/DriverContext";
 
+// Status image mapping
 const STATUS_IMAGE_MAP = {
-  online: "/assets/driver/offline.png",
-  offline: "/assets/driver/online.png",
+  online: "/assets/driver/online.png",
+  offline: "/assets/driver/offline.png",
 };
 
 const PAGE_SIZE = 4;
 
 const Driver = () => {
   const theme = useTheme();
-
-
   
-  // NEW WAY: Get from Context API
   const { drivers, deleteDriver } = useDrivers();
   
   const [page, setPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleDelete = (id) => {
     const confirmed = window.confirm(
@@ -44,7 +44,6 @@ const Driver = () => {
     );
     if (!confirmed) return;
 
-   
     deleteDriver(id);
 
     if ((page - 1) * PAGE_SIZE >= drivers.length - 1) {
@@ -56,26 +55,24 @@ const Driver = () => {
     setPage(value);
   };
 
-  const filteredDrivers= drivers.filter (driver =>
-    driver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.lastname.toLowerCase().includes(searchTerm.toLowerCase())||
-    driver.contact.toLowerCase().includes(searchTerm.toLowerCase())||
-    driver.Email.toLowerCase().includes(searchTerm.toLowerCase())||
-    driver.license.toLowerCase().includes(searchTerm.toLowerCase())||
-    driver.status.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    
-    
+  // Search filter - REMOVED password from search
+  const filteredDrivers = drivers.filter(driver =>
+    driver.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    driver.lastname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    driver.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    driver.Email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    driver.license?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (driver.is_online?.toString().toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (driver.id_company?.toString().toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (driver.id_bus?.toString().toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
-  )
-
-  
   const currentDrivers = filteredDrivers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const pageCount = Math.ceil(filteredDrivers.length / PAGE_SIZE);
 
   return (
     <Box sx={{ width: "100%" }}>
-    
+      {/* Header */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="600">
           Driver
@@ -101,8 +98,8 @@ const Driver = () => {
           placeholder="Search"
           variant="outlined"
           size="small"
-          value= {searchTerm}
-          onChange={(e)=> setSearchTerm(e.target.value) }
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
           sx={{
             flex: 1,
             minWidth: 200,
@@ -150,10 +147,19 @@ const Driver = () => {
                 Email
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+                Password
+              </TableCell>
+              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 License No
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 Status
+              </TableCell>
+              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+                Company
+              </TableCell>
+              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+                Bus
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 Action
@@ -163,7 +169,7 @@ const Driver = () => {
           <TableBody>
             {currentDrivers.map((driver) => (
               <TableRow
-                key={driver.id}
+                key={driver.id_driver}
                 sx={{
                   "&:hover": {
                     backgroundColor:
@@ -171,17 +177,40 @@ const Driver = () => {
                   },
                 }}
               >
-                <TableCell>{driver.id}</TableCell>
-                <TableCell>{driver.name}</TableCell>
+                <TableCell>{driver.id_driver}</TableCell>
+                <TableCell>{driver.first_name}</TableCell>
                 <TableCell>{driver.lastname}</TableCell>
-                <TableCell>{driver.contact}</TableCell>
+                <TableCell>{driver.phone}</TableCell>
                 <TableCell>{driver.Email}</TableCell>
+                
+                {/* Password Column - Shows "Password Set" indicator */}
+                <TableCell>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {driver.password ? (
+                      <>
+                        <LockIcon fontSize="small" sx={{ color: theme.palette.success.main }} />
+                        <Typography variant="caption" color="textSecondary">
+                          Password set
+                        </Typography>
+                      </>
+                    ) : (
+                      <>
+                        <LockOpenIcon fontSize="small" sx={{ color: theme.palette.error.main }} />
+                        <Typography variant="caption" color="textSecondary">
+                          No password
+                        </Typography>
+                      </>
+                    )}
+                  </Box>
+                </TableCell>
+                
                 <TableCell>{driver.license}</TableCell>
                 <TableCell>
+                  {/* Status image */}
                   <Box
                     component="img"
-                    src={STATUS_IMAGE_MAP[driver.status]}
-                    alt={driver.status}
+                    src={STATUS_IMAGE_MAP[driver.is_online ? 'online' : 'offline']}
+                    alt={driver.is_online ? 'Online' : 'Offline'}
                     sx={{
                       width: 48,
                       height: 48,
@@ -189,20 +218,21 @@ const Driver = () => {
                     }}
                   />
                 </TableCell>
+                <TableCell>{driver.id_company}</TableCell>
+                <TableCell>{driver.id_bus}</TableCell>
                 <TableCell>
-                  {/* Fixed: Changed to /Driver/edit/ */}
                   <IconButton
                     size="small"
                     color="primary"
                     component={Link}
-                    to={`/Driver/edit/${driver.id}`}
+                    to={`/Driver/edit/${driver.id_driver}`}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton
                     size="small"
                     color="error"
-                    onClick={() => handleDelete(driver.id)}
+                    onClick={() => handleDelete(driver.id_driver)}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
@@ -249,9 +279,9 @@ const Driver = () => {
             </TableHead>
             <TableBody>
               {currentDrivers.map((driver) => (
-                <TableRow key={driver.id}>
-                  <TableCell>{driver.id}</TableCell>
-                  <TableCell>{driver.name}</TableCell>
+                <TableRow key={driver.id_driver}>
+                  <TableCell>{driver.id_driver}</TableCell>
+                  <TableCell>{driver.first_name} {driver.lastname}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

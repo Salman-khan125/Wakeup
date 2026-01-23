@@ -21,6 +21,10 @@ const menuItems = [
   { text: "Line", icon: "/assets/line/line.png", path: "/Line" },
   { text: "Stop", icon: "/assets/stop/stop.png", path: "/Stop" },
   { text: "Users", icon: "/assets/Users/user.png", path: "/Users" },
+  { text: "Trip", icon: "/assets/trip/trip.png", path: "/Trip" },
+  { text:  "BusTrip",icon: "/asset/BusTrip/BuaTrip.png", path:"/BusTrip"},
+  { text: "Geolocation", icon: "/asset/Geolocation/Geolocation.png", path: "/Geolocation" },
+  { text: "Alert", icon: "/asset/Alert/Alert.png", path: "/Alert" }
 ];
 
 const Sidebar = ({ isMobile, mobileOpen, onClose }) => {

@@ -11,6 +11,10 @@ import { DriverProvider } from "./context/DriverContext";
 import { LineProvider } from "./context/LineContext";
 import { StopProvider } from "./context/StopContext";
 import {UsersProvider} from "./context/UsersContext";
+import { TripProvider } from "./context/TripContext";
+import { BusTripProvider } from "./context/BusTripContext";
+import { GeolocationProvider } from "./context/GeolocationContext";
+import { AlertProvider } from "./context/AlertContext";
 
 const Root = () => {
   const [mode, setMode] = useState("light"); // default light mode
@@ -30,7 +34,16 @@ const Root = () => {
                 <LineProvider>
                   <StopProvider>
                     <UsersProvider>
+                      <TripProvider>
+                        <BusTripProvider>
+                          <GeolocationProvider>
+                            <AlertProvider>
                 <App toggleTheme={toggleTheme} mode={mode} />
+                            </AlertProvider>
+                           </GeolocationProvider>
+
+                         </BusTripProvider>
+                       </TripProvider>
                      </UsersProvider>
                 </StopProvider>
                  </LineProvider>

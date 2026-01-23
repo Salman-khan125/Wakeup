@@ -142,6 +142,9 @@ const Bus = () => {
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 Bus Status
               </TableCell>
+               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+                Company
+              </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 Action
               </TableCell>
@@ -150,7 +153,7 @@ const Bus = () => {
           <TableBody>
             {currentBuses.map((bus) => (
               <TableRow
-                key={bus.id}
+                key={bus.id_bus}
                 sx={{
                   "&:hover": {
                     backgroundColor:
@@ -158,10 +161,13 @@ const Bus = () => {
                   },
                 }}
               >
-                <TableCell>{bus.id}</TableCell>
-                <TableCell>{bus.number}</TableCell>
-                <TableCell>{bus.seat}</TableCell>
+                <TableCell>{bus.id_bus}</TableCell>
+                <TableCell>{bus.plate_number}</TableCell>
+                <TableCell>{bus.capacity}</TableCell>
                 <TableCell>{bus.model}</TableCell>
+               
+                
+                
                 <TableCell>
                {STATUS_IMAGE_MAP[bus.status?.toLowerCase().replace(/\s/g, "")] ? (
     <Box
@@ -186,20 +192,22 @@ const Bus = () => {
 
 
 
+
                 </TableCell>
+                 <TableCell> {bus.id_company} </TableCell>
                 <TableCell>
                   <IconButton
                     size="small"
                     color="primary"
                     component={Link}
-                    to={`/Bus/edit/${bus.id}`}
+                    to={`/Bus/edit/${bus.id_bus}`}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton
                     size="small"
                     color="error"
-                    onClick={() => handleDelete(bus.id)}
+                    onClick={() => handleDelete(bus.id_bus)}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
@@ -246,9 +254,9 @@ const Bus = () => {
             </TableHead>
             <TableBody>
               {currentBuses.map((bus) => (
-                <TableRow key={bus.id}>
-                  <TableCell>{bus.id}</TableCell>
-                  <TableCell>{bus.number}</TableCell>
+                <TableRow key={bus.id_bus}>
+                  <TableCell>{bus.id_bus}</TableCell>
+                  <TableCell>{bus.plate_number}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

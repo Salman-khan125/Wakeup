@@ -9,82 +9,97 @@ import {
     useTheme,
     MenuItem,
     Select,
-    FormControl 
+    FormControl,
+    Switch,
+    FormControlLabel
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useDrivers } from "../context/DriverContext";
-
-// Status options for dropdown
-const STATUS_OPTIONS = [
-  { value: "online", label: "Online" },
-  { value: "offline", label: "Offline" },
-];
 
 const AddDriver = () => {
     const theme = useTheme();
     const navigate = useNavigate();
     
-    // Get addDriver function from context
     const { addDriver } = useDrivers();
     
-    // Form state
+    // Form state - MATCH Driver.jsx field names
     const [form, setForm] = useState({
-        name: "",
+        first_name: "",
         lastname: "",
-        contact: "",
+        phone: "",
         Email: "",
+        password: "",
         license: "",
-        status: "online",
+        is_online: true,  // Boolean, not string
+        id_company: "",
+        id_bus: "",
     });
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value, type, checked } = e.target;
+        
+        if (type === 'checkbox') {
+            setForm({ ...form, [name]: checked });
+        } else {
+            setForm({ ...form, [name]: value });
+        }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        addDriver(form);
+        
+        // Validate required fields
+        if (!form.first_name || !form.lastname || !form.phone || !form.Email || !form.license) {
+            alert("Please fill in all required fields!");
+            return;
+        }
+        
+        // Create driver data matching your Driver.jsx structure
+        const driverData = {
+            ...form,
+            id_driver: Math.floor(Math.random() * 10000), // Temporary ID - backend should generate
+            // Ensure is_online is boolean
+            is_online: Boolean(form.is_online),
+        };
+        
+        addDriver(driverData);
         alert("Driver added successfully!");
         navigate("/Driver");
     };
 
     return (
-        <Box sx={{ width: "100%" }}> {/* Fixed: Box not box */}
+        <Box sx={{ width: "100%" }}>
+            <Box sx={{ mb: 3 }}>
+                <Typography variant="h5" fontWeight="600">
+                    Add New Driver
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                    Add a new driver to your system
+                </Typography>
+            </Box>
+
             <Paper
                 elevation={0}
                 sx={{
-                    mt: 4,
                     p: { xs: 2, md: 3 },
                     borderRadius: 3,
                     backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
                 }}
             >
-                <Typography variant="h6" fontWeight={600}>
-                    Add Driver
-                </Typography>
-
-                <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 0.5, mb: 3 }}
-                >
-                    Add a new driver to your system
-                </Typography>
-
-                {/* Form with onSubmit handler */}
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
                         {/* First Name */}
                         <Grid item xs={12} md={6}>
                             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                                First Name
+                                First Name *
                             </Typography>
                             <TextField
                                 fullWidth
-                                name="name"
-                                value={form.name}
+                                name="first_name"
+                                value={form.first_name}
                                 onChange={handleChange}
-                                placeholder="First Name"
+                                placeholder="John"
+                                required
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: 3,
@@ -96,14 +111,15 @@ const AddDriver = () => {
                         {/* Last Name */}
                         <Grid item xs={12} md={6}>
                             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                                Last Name
+                                Last Name *
                             </Typography>
                             <TextField
                                 fullWidth
                                 name="lastname"
                                 value={form.lastname}
                                 onChange={handleChange}
-                                placeholder="Last Name"
+                                placeholder="Doe"
+                                required
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: 3,
@@ -115,14 +131,15 @@ const AddDriver = () => {
                         {/* Phone Number */}
                         <Grid item xs={12} md={6}>
                             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                                Phone Number
+                                Phone Number *
                             </Typography>
                             <TextField
                                 fullWidth
-                                name="contact"
-                                value={form.contact}
+                                name="phone"
+                                value={form.phone}
                                 onChange={handleChange}
-                                placeholder="+00*******"
+                                placeholder="+1234567890"
+                                required
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: 3,
@@ -134,14 +151,16 @@ const AddDriver = () => {
                         {/* Email Address */}
                         <Grid item xs={12} md={6}>
                             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                                Email Address
+                                Email Address *
                             </Typography>
                             <TextField
                                 fullWidth
                                 name="Email"
+                                type="email"
                                 value={form.Email}
                                 onChange={handleChange}
-                                placeholder="Email"
+                                placeholder="john.doe@example.com"
+                                required
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: 3,
@@ -153,14 +172,15 @@ const AddDriver = () => {
                         {/* License Number */}
                         <Grid item xs={12} md={6}>
                             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                                License Number
+                                License Number *
                             </Typography>
                             <TextField
                                 fullWidth
                                 name="license"
                                 value={form.license}
                                 onChange={handleChange}
-                                placeholder="License Number"
+                                placeholder="DL-123456"
+                                required
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: 3,
@@ -169,37 +189,98 @@ const AddDriver = () => {
                             />
                         </Grid>
 
-                        {/* Status (Dropdown) */}
+                        {/* Password */}
                         <Grid item xs={12} md={6}>
                             <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                                Status
+                                Password *
                             </Typography>
-                            <FormControl fullWidth sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }}>
-                                <Select
-                                    name="status"
-                                    value={form.status}
-                                    onChange={handleChange}
-                                >
-                                    {STATUS_OPTIONS.map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
+                            <TextField
+                                fullWidth
+                                name="password"
+                                type="password"
+                                value={form.password}
+                                onChange={handleChange}
+                                placeholder="Set password"
+                                required
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 3,
+                                    },
+                                }}
+                            />
+                        </Grid>
+
+                        {/* Company ID */}
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                                Company ID
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                name="id_company"
+                                type="number"
+                                value={form.id_company}
+                                onChange={handleChange}
+                                placeholder="123"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 3,
+                                    },
+                                }}
+                            />
+                        </Grid>
+
+                        {/* Bus ID */}
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                                Bus ID
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                name="id_bus"
+                                type="number"
+                                value={form.id_bus}
+                                onChange={handleChange}
+                                placeholder="456"
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 3,
+                                    },
+                                }}
+                            />
+                        </Grid>
+
+                        {/* Status */}
+                        <Grid item xs={12}>
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={form.is_online}
+                                        onChange={handleChange}
+                                        name="is_online"
+                                        color="primary"
+                                    />
+                                }
+                                label={`Status: ${form.is_online ? "Online" : "Offline"}`}
+                            />
                         </Grid>
                     </Grid>
 
-                    {/* Submit Button */}
-                    <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
+                    {/* Buttons */}
+                    <Box sx={{ 
+                        mt: 4, 
+                        display: "flex", 
+                        gap: 2,
+                        pt: 2,
+                        borderTop: `1px solid ${theme.palette.mode === 'light' ? '#e0e0e0' : '#333'}` 
+                    }}>
                         <Button
                             type="submit"
                             variant="contained"
                             sx={{
-                                textTransform: "none",
+                                borderRadius: 3,
                                 px: 4,
-                                py: 1.2,
-                                borderRadius: 2,
+                                py: 1
                             }}
                         >
                             Add Driver
@@ -208,10 +289,9 @@ const AddDriver = () => {
                             variant="outlined"
                             onClick={() => navigate("/Driver")}
                             sx={{
-                                textTransform: "none",
+                                borderRadius: 3,
                                 px: 4,
-                                py: 1.2,
-                                borderRadius: 2,
+                                py: 1
                             }}
                         >
                             Cancel

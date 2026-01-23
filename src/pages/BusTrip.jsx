@@ -18,29 +18,29 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Link } from "react-router-dom";
-import { useLines } from "../context/LineContext";
+import { useBusTrips } from "../context/BusTripContext";
 
 const PAGE_SIZE = 4;
 
-const Line = () => {
+const BusTrip = () => {
   const theme = useTheme();
   
   // GET DATA FROM CONTEXT
-  const { lines, deleteLine } = useLines();
+  const { busTrips, deleteBusTrip } = useBusTrips();
   
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleDelete = (id_line) => {
+  const handleDelete = (id_bus_trip) => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this line?"
+      "Are you sure you want to delete this bus trip?"
     );
     if (!confirmed) return;
 
     // USE CONTEXT FUNCTION
-    deleteLine(id_line);
+    deleteBusTrip(id_bus_trip);
 
-    if ((page - 1) * PAGE_SIZE >= lines.length - 1) {
+    if ((page - 1) * PAGE_SIZE >= busTrips.length - 1) {
       setPage((p) => Math.max(p - 1, 1));
     }
   };
@@ -49,30 +49,68 @@ const Line = () => {
     setPage(value);
   };
 
-  // SEARCH FUNCTIONALITY
-  const filteredLines = lines.filter(line =>
-    (line.line_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (line.description || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (line.distance_km || "").toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (line.id_company || "").toString().toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Helper function to format date
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      return new Date(dateString).toLocaleDateString();
+    } catch (error) {
+      return dateString;
+    }
+  };
 
-  const currentLines = filteredLines.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const pageCount = Math.ceil(filteredLines.length / PAGE_SIZE);
+  // Helper function to format time
+  const formatTime = (timeString) => {
+    if (!timeString) return "N/A";
+    try {
+      const [hours, minutes] = timeString.split(":");
+      const date = new Date();
+      date.setHours(parseInt(hours), parseInt(minutes));
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch (error) {
+      return timeString;
+    }
+  };
+
+  // Status display mapping
+  const STATUS_DISPLAY = {
+    in_service: { label: "In Service", color: "success" },
+    paused: { label: "Paused", color: "warning" },
+    completed: { label: "Completed", color: "info" },
+  };
+
+  // SEARCH FUNCTIONALITY
+  const filteredBusTrips = busTrips.filter(busTrip => {
+    const searchLower = searchTerm.toLowerCase();
+    const busId = (busTrip.id_bus || "").toString().toLowerCase();
+    const tripId = (busTrip.id_trip || "").toString().toLowerCase();
+    const serviceDate = formatDate(busTrip.service_date).toLowerCase();
+    const status = (STATUS_DISPLAY[busTrip.status]?.label || "").toLowerCase();
+    const departure = formatTime(busTrip.actual_departure).toLowerCase();
+    
+    return busId.includes(searchLower) ||
+           tripId.includes(searchLower) ||
+           serviceDate.includes(searchLower) ||
+           status.includes(searchLower) ||
+           departure.includes(searchLower);
+  });
+
+  const currentBusTrips = filteredBusTrips.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const pageCount = Math.ceil(filteredBusTrips.length / PAGE_SIZE);
 
   return (
     <Box sx={{ width: "100%" }}>
-      {/* Header */}
+      {/* Header - Same structure as Trip */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="600">
-          Lines
+          Bus Trip
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          Information about your bus lines and routes
+          Information about your current plan and usages
         </Typography>
       </Box>
 
-      {/* Search + Add */}
+      {/* Search + Add - Same structure as Trip */}
       <Box
         sx={{
           display: "flex",
@@ -85,7 +123,7 @@ const Line = () => {
         }}
       >
         <TextField
-          placeholder="Search lines"
+          placeholder="Search"
           variant="outlined"
           size="small"
           value={searchTerm}
@@ -100,15 +138,15 @@ const Line = () => {
         />
         <Button
           component={Link}
-          to="/Line/add"
+          to="/BusTrip/add"
           variant="contained"
           sx={{ height: 40, borderRadius: 3 }}
         >
-          + Add Line
+          + Add
         </Button>
       </Box>
 
-      {/* Main Table */}
+      {/* Main Table - Using BusTrip data */}
       <TableContainer
         component={Paper}
         sx={{
@@ -125,16 +163,19 @@ const Line = () => {
                 #
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Line Name
+                Bus ID
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Description
+                Trip ID
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Distance (km)
+                Service Date
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Company ID
+                Actual Departure
+              </TableCell>
+              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+                Status
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 Action
@@ -142,9 +183,9 @@ const Line = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentLines.map((line) => (
+            {currentBusTrips.map((busTrip) => (
               <TableRow
-                key={line.id_line}
+                key={busTrip.id_bus_trip}
                 sx={{
                   "&:hover": {
                     backgroundColor:
@@ -152,24 +193,46 @@ const Line = () => {
                   },
                 }}
               >
-                <TableCell>{line.id_line}</TableCell>
-                <TableCell>{line.line_name}</TableCell>
-                <TableCell>{line.description}</TableCell>
-                <TableCell>{line.distance_km}</TableCell>
-                <TableCell>{line.id_company}</TableCell>
+                <TableCell>{busTrip.id_bus_trip}</TableCell>
+                <TableCell>{busTrip.id_bus}</TableCell>
+                <TableCell>{busTrip.id_trip}</TableCell>
+                <TableCell>{formatDate(busTrip.service_date)}</TableCell>
+                <TableCell>{formatTime(busTrip.actual_departure)}</TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "inline-block",
+                      px: 1.5,
+                      py: 0.5,
+                      borderRadius: 1,
+                      backgroundColor:
+                        busTrip.status === "in_service" ? "#e8f5e9" :
+                        busTrip.status === "paused" ? "#fff3e0" :
+                        "#e3f2fd",
+                      color:
+                        busTrip.status === "in_service" ? "#2e7d32" :
+                        busTrip.status === "paused" ? "#f57c00" :
+                        "#1565c0",
+                      fontWeight: 500,
+                      fontSize: "0.75rem",
+                    }}
+                  >
+                    {STATUS_DISPLAY[busTrip.status]?.label || busTrip.status}
+                  </Box>
+                </TableCell>
                 <TableCell>
                   <IconButton
                     size="small"
                     color="primary"
                     component={Link}
-                    to={`/Line/edit/${line.id_line}`}
+                    to={`/BusTrip/edit/${busTrip.id_bus_trip}`}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton
                     size="small"
                     color="error"
-                    onClick={() => handleDelete(line.id_line)}
+                    onClick={() => handleDelete(busTrip.id_bus_trip)}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
@@ -180,7 +243,7 @@ const Line = () => {
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
+      {/* Pagination - Same as Trip */}
       {pageCount > 1 && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 4 }}>
           <Pagination
@@ -192,10 +255,10 @@ const Line = () => {
         </Box>
       )}
 
-      {/* Line Display List */}
+      {/* BusTrip Display List - Same structure as Trip */}
       <Box>
         <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
-          Line Display
+          BusTrip Display
         </Typography>
         <TableContainer
           component={Paper}
@@ -209,16 +272,20 @@ const Line = () => {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ width: 50 }}>#</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+                <TableCell
+                  sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+                >
                   List
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {currentLines.map((line) => (
-                <TableRow key={line.id_line}>
-                  <TableCell>{line.id_line}</TableCell>
-                  <TableCell>{line.line_name}</TableCell>
+              {currentBusTrips.map((busTrip) => (
+                <TableRow key={busTrip.id_bus_trip}>
+                  <TableCell>{busTrip.id_bus_trip}</TableCell>
+                  <TableCell>
+                    Bus {busTrip.id_bus} - Trip {busTrip.id_trip} ({formatDate(busTrip.service_date)})
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -229,4 +296,4 @@ const Line = () => {
   );
 };
 
-export default Line;
+export default BusTrip;

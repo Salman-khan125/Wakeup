@@ -20,6 +20,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Link } from "react-router-dom";
 import { useCompanies } from "../context/CompanyContext"; // ADD THIS
 
+const STATUS_IMAGE_MAP = {
+  Logo1: "/assets/company/1.png",
+  Logo2: "/assets/company/2.png",
+  Logo3: "/assets/company/3.png",
+  Logo4: "/assets/company/4.png",
+  Logo5: "/assets/company/5.png",
+  Logo6: "/assets/company/6.png",
+};
+
 const PAGE_SIZE = 4;
 
 const Company = () => {
@@ -50,10 +59,14 @@ const Company = () => {
   };
        
         const filteredCompanies = companies.filter(company =>
-  company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  company.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  company.company_logo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  company.transport_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  company.activity_domain.toLowerCase().includes(searchTerm.toLowerCase()) ||
   company.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  company.contact.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  company.Registration.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  company.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  company.created_at.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  company.id_country.toLowerCase().includes(searchTerm.toLowerCase()) ||
   company.Email.toLowerCase().includes(searchTerm.toLowerCase())
 );
   const currentCompanies = filteredCompanies.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -127,14 +140,30 @@ const Company = () => {
     <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
       Company Name
     </TableCell>
+    <TableCell
+    sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+      Company Logo
+    </TableCell>
+      <TableCell
+    sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+      Transport Type
+    </TableCell>
+       <TableCell
+    sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+      Activity
+    </TableCell>
     <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
       Head Office Address
     </TableCell>
     <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-      Contact No
+      phone No
     </TableCell>
+    
     <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
       Registration Date
+    </TableCell>
+      <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+      Country
     </TableCell>
     <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
       Email Address
@@ -147,7 +176,7 @@ const Company = () => {
           <TableBody>
             {currentCompanies.map((company) => (
               <TableRow
-                key={company.id}
+                key={company.id_company}
                 sx={{
                   "&:hover": {
                     backgroundColor:
@@ -155,25 +184,42 @@ const Company = () => {
                   },
                 }}
               >
-      <TableCell>{company.id}</TableCell>
-      <TableCell>{company.name}</TableCell>
+      <TableCell>{company.id_company}</TableCell>
+      <TableCell>{company.company_name}</TableCell>
+       <TableCell>
+                  <Box
+                    component="img"
+                    src={STATUS_IMAGE_MAP[company.company_logo ]}
+                    alt={company.company_logo}
+                    sx={{
+                      width: 48,
+                      height: 48,
+                      objectFit: "contain",
+                    }}
+                  />
+                </TableCell>
+      <TableCell> {company.transport_type} </TableCell>
+      <TableCell> {company.activity_domain} </TableCell>
       <TableCell>{company.address}</TableCell>
-      <TableCell>{company.contact}</TableCell>
-      <TableCell>{company.Registration}</TableCell>
+      <TableCell>{company.phone}</TableCell>
+      <TableCell>{company.created_at}</TableCell>
+      <TableCell> {company.id_country} </TableCell>
       <TableCell>{company.Email}</TableCell>
+     
+
                 <TableCell>
                   <IconButton
                     size="small"
                     color="primary"
                     component={Link}
-                    to={`/Company/edit/${company.id}`}
+                    to={`/Company/edit/${company.id_company}`}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton
                     size="small"
                     color="error"
-                    onClick={() => handleDelete(company.id)}
+                    onClick={() => handleDelete(company.id_company)}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
@@ -223,9 +269,9 @@ const Company = () => {
 
       <TableBody>
         {currentCompanies.map((company) => (
-          <TableRow key={company.id}>
-            <TableCell>{company.id}</TableCell>
-            <TableCell>{company.name}</TableCell>
+          <TableRow key={company.id_company}>
+            <TableCell>{company.id_company}</TableCell>
+            <TableCell>{company.company_name}</TableCell>
           </TableRow>
         ))}
       </TableBody>

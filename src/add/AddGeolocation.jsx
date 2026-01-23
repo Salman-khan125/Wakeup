@@ -9,21 +9,22 @@ import {
   useTheme,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useLines } from "../context/LineContext";
+import { useGeolocations } from "../context/GeolocationContext";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-const AddLine = () => {
+const AddGeolocation = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   
   // GET CONTEXT FUNCTION
-  const { addLine } = useLines();
+  const { addGeolocation } = useGeolocations();
   
-  // Updated form state with new field names
+  // Form state for Geolocation fields
   const [form, setForm] = useState({
-    line_name: "",
-    description: "",
-    distance_km: "",
-    id_company: "",
+    id_bus_trip: "",
+    latitude: "",
+    longitude: "",
+    timestamp: "",
   });
 
   const handleChange = (e) => {
@@ -34,21 +35,64 @@ const AddLine = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log("Submitting line form:", form);
+    console.log("Submitting geolocation form:", form);
     
     // Validate required fields
-    if (!form.line_name || !form.distance_km) {
-      alert("Line Name and Distance are required!");
+    if (!form.id_bus_trip || !form.latitude || !form.longitude) {
+      alert("Bus Trip ID, Latitude, and Longitude are required!");
       return;
     }
     
-    // ADD LINE USING CONTEXT FUNCTION
-    addLine(form);
+    // Validate latitude (-90 to 90)
+    const lat = parseFloat(form.latitude);
+    if (isNaN(lat) || lat < -90 || lat > 90) {
+      alert("Latitude must be a number between -90 and 90");
+      return;
+    }
     
-    alert("Line added successfully!");
+    // Validate longitude (-180 to 180)
+    const lng = parseFloat(form.longitude);
+    if (isNaN(lng) || lng < -180 || lng > 180) {
+      alert("Longitude must be a number between -180 and 180");
+      return;
+    }
     
-    // Navigate back to lines list
-    navigate("/Line");
+    // If timestamp is not provided, use current time
+    const timestamp = form.timestamp || new Date().toISOString();
+    
+    // ADD GEOLOCATION USING CONTEXT FUNCTION
+    addGeolocation({
+      id_bus_trip: parseInt(form.id_bus_trip, 10),
+      latitude: form.latitude,
+      longitude: form.longitude,
+      timestamp: timestamp,
+    });
+    
+    alert("Geolocation added successfully!");
+    
+    // Navigate back to geolocations list
+    navigate("/Geolocation");
+  };
+
+  // Handle getting current location
+  const handleGetCurrentLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setForm({
+            ...form,
+            latitude: position.coords.latitude.toString(),
+            longitude: position.coords.longitude.toString(),
+            timestamp: new Date().toISOString(),
+          });
+        },
+        (error) => {
+          alert("Unable to get location: " + error.message);
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser");
+    }
   };
 
   return (
@@ -56,10 +100,10 @@ const AddLine = () => {
       {/* Header - Same structure */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="600">
-          Add New Line
+          Add New Geolocation
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          Add new line information
+          Add new geolocation information
         </Typography>
       </Box>
 
@@ -73,17 +117,18 @@ const AddLine = () => {
       >
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
-            {/* Line Name */}
+            {/* Bus Trip ID */}
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Line Name *
+                Bus Trip ID *
               </Typography>
               <TextField 
                 fullWidth 
-                name="line_name"  // Changed from "name"
-                value={form.line_name}
+                name="id_bus_trip"
+                type="number"
+                value={form.id_bus_trip}
                 onChange={handleChange}
-                placeholder="Enter line name"
+                placeholder="Enter bus trip ID"
                 required 
                 sx={{ 
                   "& .MuiOutlinedInput-root": { 
@@ -93,37 +138,17 @@ const AddLine = () => {
               />
             </Grid>
 
-            {/* Description */}
+            {/* Latitude */}
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Description
+                Latitude *
               </Typography>
               <TextField 
                 fullWidth 
-                name="description"  // Changed from "Email"
-                value={form.description}
+                name="latitude"
+                value={form.latitude}
                 onChange={handleChange}
-                placeholder="Enter line description"
-                sx={{ 
-                  "& .MuiOutlinedInput-root": { 
-                    borderRadius: 3,
-                  } 
-                }} 
-              />
-            </Grid>
-
-            {/* Distance (km) */}
-            <Grid item xs={12} md={6}>
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Distance (km) *
-              </Typography>
-              <TextField 
-                fullWidth 
-                name="distance_km"  // Changed from "Role"
-                type="number"
-                value={form.distance_km}
-                onChange={handleChange}
-                placeholder="Enter distance in km"
+                placeholder="e.g., 40.712776"
                 required 
                 sx={{ 
                   "& .MuiOutlinedInput-root": { 
@@ -133,18 +158,40 @@ const AddLine = () => {
               />
             </Grid>
 
-            {/* Company ID */}
+            {/* Longitude */}
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Company ID
+                Longitude *
               </Typography>
               <TextField 
                 fullWidth 
-                name="id_company"  // New field
-                type="number"
-                value={form.id_company}
+                name="longitude"
+                value={form.longitude}
                 onChange={handleChange}
-                placeholder="Enter company ID"
+                placeholder="e.g., -74.005974"
+                required 
+                sx={{ 
+                  "& .MuiOutlinedInput-root": { 
+                    borderRadius: 3,
+                  } 
+                }} 
+              />
+            </Grid>
+
+            {/* Timestamp */}
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                Timestamp
+              </Typography>
+              <TextField 
+                fullWidth 
+                name="timestamp"
+                type="datetime-local"
+                value={form.timestamp}
+                onChange={handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
                 sx={{ 
                   "& .MuiOutlinedInput-root": { 
                     borderRadius: 3,
@@ -154,7 +201,22 @@ const AddLine = () => {
             </Grid>
           </Grid>
 
-          {/* Action Buttons */}
+          {/* Location Helper */}
+          <Box sx={{ mt: 3, mb: 2 }}>
+            <Button
+              variant="outlined"
+              startIcon={<LocationOnIcon />}
+              onClick={handleGetCurrentLocation}
+              sx={{ borderRadius: 2 }}
+            >
+              Get Current Location
+            </Button>
+            <Typography variant="caption" color="textSecondary" sx={{ ml: 2 }}>
+              Fill latitude, longitude, and timestamp with current location
+            </Typography>
+          </Box>
+
+          {/* Action Buttons - Same structure */}
           <Box sx={{ 
             mt: 4, 
             display: "flex", 
@@ -171,11 +233,11 @@ const AddLine = () => {
                 py: 1
               }}
             >
-              Add Line
+              Add Geolocation
             </Button>
             <Button 
               variant="outlined" 
-              onClick={() => navigate("/Line")}
+              onClick={() => navigate("/Geolocation")}
               sx={{
                 borderRadius: 3,
                 px: 4,
@@ -191,4 +253,4 @@ const AddLine = () => {
   );
 };
 
-export default AddLine;
+export default AddGeolocation;

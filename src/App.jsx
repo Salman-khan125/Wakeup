@@ -22,6 +22,11 @@ import Driver from "./pages/Driver";
 import Line from "./pages/Line";
 import Stop from "./pages/Stop";
 import Users from "./pages/Users";
+import Trip from "./pages/Trip";
+import BusTrip from "./pages/BusTrip";
+import Geolocation from "./pages/Geolocation";
+import Alert from "./pages/Alert";
+
 import AddCountry from "./add/AddCountry";
 import AddCompany from "./add/AddCompany";
 import AddBus from "./add/AddBus";
@@ -29,6 +34,11 @@ import AddDriver from "./add/AddDriver";
 import AddLine from "./add/AddLine";
 import AddStop from "./add/AddStop";
 import AddUsers from "./add/AddUsers";
+import AddTrip from "./add/AddTrip";
+import AddBusTrip from "./add/AddBusTrip";
+import AddGeolocation from "./add/AddGeolocation";
+import AddAlert from "./add/AddAlert";
+
 import EditCompany from "./EditForms/EditCompany";
 import EditCountry from "./EditForms/EditCountry";
 import EditBus from "./EditForms/EditBus";
@@ -36,13 +46,16 @@ import EditDriver from "./EditForms/EditDriver";
 import EditLine from "./EditForms/EditLine";
 import EditStop from "./EditForms/EditStop";
 import EditUsers from "./EditForms/EditUsers";
-
+import EditTrip from "./EditForms/EditTrip";
+import EditBusTrip from "./EditForms/EditBusTrip";
+import EditGeolocation from "./EditForms/EditGeolocation";
+import EditAlert from "./EditForms/EditAlert";
 
 function App({ toggleTheme, mode }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
-  
+
   // REMOVE THIS if your Company component has its own data
   // const [companies, setCompanies] = useState(initialCompanies);
 
@@ -112,7 +125,7 @@ function App({ toggleTheme, mode }) {
 
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<Dashboard/>} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/Country" element={<Country />} />
           <Route path="/Country/add" element={<AddCountry />} />
           <Route path="/Country/edit/:id" element={<EditCountry />} />
@@ -135,6 +148,18 @@ function App({ toggleTheme, mode }) {
           <Route path="/Users" element={<Users />} />
           <Route path="/Users/add" element={<AddUsers />} />
           <Route path="/Users/edit/:id" element={<EditUsers />} />
+          <Route path="/Trip" element={<Trip />} />
+          <Route path="/Trip/add" element={<AddTrip />} />
+          <Route path="/Trip/edit/:id" element={<EditTrip />} />
+          <Route path="/BusTrip" element={<BusTrip />} />
+          <Route path="/BusTrip/add" element={<AddBusTrip />} />
+          <Route path="/BusTrip/edit/:id" element={<EditBusTrip />} />
+          <Route path="/Geolocation" element={<Geolocation />} />
+          <Route path="/Geolocation/add" element={<AddGeolocation />} />
+          <Route path="/Geolocation/edit/:id" element={<EditGeolocation />} />
+          <Route path="/Alert" element={<Alert />} />
+          <Route path="/Alert/add" element={<AddAlert />} />
+          <Route path="/Alert/edit/:id" element={<EditAlert />} />
         </Routes>
       </Box>
     </Box>

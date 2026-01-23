@@ -18,7 +18,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Link } from "react-router-dom";
-import { useStops } from "../context/StopContext"; // IMPORT CONTEXT
+import { useStops } from "../context/StopContext";
 
 const STATUS_IMAGE_MAP = {
   Frame1: "/assets/stop/Frame1.png",
@@ -30,11 +30,10 @@ const PAGE_SIZE = 4;
 const Stop = () => {
   const theme = useTheme();
   
-  // GET DATA FROM CONTEXT
   const { stops, deleteStop } = useStops();
   
   const [page, setPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState(""); // ADD SEARCH STATE
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleDelete = (id) => {
     const confirmed = window.confirm(
@@ -42,7 +41,6 @@ const Stop = () => {
     );
     if (!confirmed) return;
 
-    // USE CONTEXT FUNCTION
     deleteStop(id);
 
     if ((page - 1) * PAGE_SIZE >= stops.length - 1) {
@@ -54,20 +52,30 @@ const Stop = () => {
     setPage(value);
   };
 
-  // ADD SEARCH FUNCTIONALITY
-  const filteredStops = stops.filter(stop =>
-    stop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    stop.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    stop.Latitude.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    stop.longitude.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // UPDATED SEARCH: Use new field names with optional chaining
+  const filteredStops = stops.filter(stop => {
+    const searchLower = searchTerm.toLowerCase();
+    const stopName = stop?.stop_name?.toLowerCase() || '';
+    const city = stop?.city?.toLowerCase() || '';
+    const latitude = stop?.Latitude?.toLowerCase() || '';
+    const longitude = stop?.longitude?.toLowerCase() || '';
+    const qrCode = stop?.qr_code?.toLowerCase() || '';
+    const countryId = stop?.id_country?.toString() || '';
+    
+    return stopName.includes(searchLower) ||
+           city.includes(searchLower) ||
+           latitude.includes(searchLower) ||
+           longitude.includes(searchLower) ||
+           qrCode.includes(searchLower) ||
+           countryId.includes(searchLower);
+  });
 
   const currentStops = filteredStops.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const pageCount = Math.ceil(filteredStops.length / PAGE_SIZE);
 
   return (
     <Box sx={{ width: "100%" }}>
-      {/* Header - Same structure as Company */}
+      {/* Header */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="600">
           Stop
@@ -77,7 +85,7 @@ const Stop = () => {
         </Typography>
       </Box>
 
-      {/* Search + Add - Same structure as Company */}
+      {/* Search + Add */}
       <Box
         sx={{
           display: "flex",
@@ -113,7 +121,7 @@ const Stop = () => {
         </Button>
       </Box>
 
-      {/* Main Table - Same structure */}
+      {/* Main Table - UPDATED FIELD NAMES */}
       <TableContainer
         component={Paper}
         sx={{
@@ -133,13 +141,16 @@ const Stop = () => {
                 Stop Name
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Latitude No
+                Latitude
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Longitude No
+                Longitude
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 City
+              </TableCell>
+              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+                Country ID
               </TableCell>
               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                 QR
@@ -152,7 +163,7 @@ const Stop = () => {
           <TableBody>
             {currentStops.map((stop) => (
               <TableRow
-                key={stop.id}
+                key={stop.id || stop.id_stop} // Use id_stop if id doesn't exist
                 sx={{
                   "&:hover": {
                     backgroundColor:
@@ -160,16 +171,17 @@ const Stop = () => {
                   },
                 }}
               >
-                <TableCell>{stop.id}</TableCell>
-                <TableCell>{stop.name}</TableCell>
-                <TableCell>{stop.Latitude}</TableCell>
-                <TableCell>{stop.longitude}</TableCell>
-                <TableCell>{stop.city}</TableCell>
+                <TableCell>{stop.id || stop.id_stop || "N/A"}</TableCell>
+                <TableCell>{stop.stop_name || "N/A"}</TableCell>
+                <TableCell>{stop.Latitude || "N/A"}</TableCell>
+                <TableCell>{stop.longitude || "N/A"}</TableCell>
+                <TableCell>{stop.city || "N/A"}</TableCell>
+                <TableCell>{stop.id_country || "N/A"}</TableCell>
                 <TableCell>
                   <Box
                     component="img"
-                    src={STATUS_IMAGE_MAP[stop.qr]}
-                    alt={stop.qr}
+                    src={STATUS_IMAGE_MAP[stop.qr_code] || "/assets/stop/default.png"}
+                    alt={stop.qr_code || "QR"}
                     sx={{
                       width: 48,
                       height: 48,
@@ -182,14 +194,14 @@ const Stop = () => {
                     size="small"
                     color="primary"
                     component={Link}
-                    to={`/Stop/edit/${stop.id}`}
+                    to={`/Stop/edit/${stop.id || stop.id_stop}`}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton
                     size="small"
                     color="error"
-                    onClick={() => handleDelete(stop.id)}
+                    onClick={() => handleDelete(stop.id || stop.id_stop)}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
@@ -200,7 +212,7 @@ const Stop = () => {
         </Table>
       </TableContainer>
 
-      {/* Pagination - Same as Company */}
+      {/* Pagination */}
       {pageCount > 1 && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 4 }}>
           <Pagination
@@ -212,7 +224,7 @@ const Stop = () => {
         </Box>
       )}
 
-      {/* Stop Display List - Same structure as Company */}
+      {/* Stop Display List */}
       <Box>
         <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
           Stop Display
@@ -236,9 +248,9 @@ const Stop = () => {
             </TableHead>
             <TableBody>
               {currentStops.map((stop) => (
-                <TableRow key={stop.id}>
-                  <TableCell>{stop.id}</TableCell>
-                  <TableCell>{stop.name}</TableCell>
+                <TableRow key={stop.id || stop.id_stop}>
+                  <TableCell>{stop.id || stop.id_stop || "N/A"}</TableCell>
+                  <TableCell>{stop.stop_name || "N/A"}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

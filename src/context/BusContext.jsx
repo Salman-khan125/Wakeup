@@ -12,36 +12,89 @@ export const useBuses = () => {
 
 export const BusProvider = ({ children }) => {
   // Your bus data structure
-const [buses, setBuses] = useState([
-  { id: 1, number: "ale848", seat: "SL", model: "Region", status: "active" },
-  { id: 2, number: "ale848", seat: "SL", model: "Region", status: "maintenance" },
-  { id: 3, number: "ale848", seat: "SL", model: "Region", status: "outofservice" },
-  { id: 4, number: "ale848", seat: "SL", model: "Region", status: "active" },
-  { id: 5, number: "ale848", seat: "SL", model: "Region", status: "outofservice" },
-  { id: 6, number: "ale848", seat: "SL", model: "Region", status: "maintenance" }, 
-]);
-
+  const [buses, setBuses] = useState([
+    {
+      id_bus: 1,
+      plate_number: "ale848",
+      capacity: "SL",
+      model: "Region",
+      status: "active",
+      id_company: "Fk",
+    },
+    {
+      id_bus: 2,
+      plate_number: "ale848",
+      capacity: "SL",
+      model: "Region",
+      status: "maintenance",
+      id_company: "Fk",
+    },
+    {
+      id_bus: 3,
+      plate_number: "ale848",
+      capacity: "SL",
+      model: "Region",
+      status: "outofservice",
+      id_company: "Fk",
+    },
+    {
+      id_bus: 4,
+      plate_number: "ale848",
+      capacity: "SL",
+      model: "Region",
+      status: "active",
+      id_company: "Fk",
+    },
+    {
+      id_bus: 5,
+      plate_number: "ale848",
+      capacity: "SL",
+      model: "Region",
+      status: "outofservice",
+      id_company: "Fk",
+    },
+    {
+      id_bus: 6,
+      plate_number: "ale848",
+      capacity: "SL",
+      model: "Region",
+      status: "maintenance",
+      id_company: "Fk",
+    },
+    
+  ]);
 
   const addBus = (newBus) => {
-    const id = buses.length > 0 
-      ? Math.max(...buses.map(b => b.id)) + 1 
-      : 1;
+    console.log("addBus called with:", newBus);
     
-    setBuses([...buses, { ...newBus, id }]);
-    console.log("Added bus:", newBus);
+    // Find the maximum id_bus (not id)
+    const maxId = buses.length > 0 
+      ? Math.max(...buses.map((b) => b.id_bus)) 
+      : 0;
+    
+    const newId = maxId + 1;
+    
+    console.log("Current max ID:", maxId, "New ID:", newId);
+    
+    // Use id_bus, not id
+    setBuses([...buses, { ...newBus, id_bus: newId }]);
+    console.log("Added bus with id_bus:", newId);
   };
 
   const updateBus = (id, updatedData) => {
-    setBuses(prev => 
-      prev.map(bus => 
-        bus.id === id ? { ...bus, ...updatedData } : bus
-      )
+    console.log("updateBus called - ID:", id, "Data:", updatedData);
+    
+    setBuses((prev) =>
+      prev.map((bus) => 
+        bus.id_bus == id ? { ...bus, ...updatedData } : bus  // Use id_bus and ==
+      ),
     );
     console.log("Updated bus ID:", id, "with data:", updatedData);
   };
 
   const deleteBus = (id) => {
-    setBuses(prev => prev.filter(bus => bus.id !== id));
+    console.log("deleteBus called for id:", id);
+    setBuses((prev) => prev.filter((bus) => bus.id_bus != id));  // Use id_bus and !=
     console.log("Deleted bus ID:", id);
   };
 
@@ -52,9 +105,5 @@ const [buses, setBuses] = useState([
     deleteBus,
   };
 
-  return (
-    <BusContext.Provider value={value}>
-      {children}
-    </BusContext.Provider>
-  );
+  return <BusContext.Provider value={value}>{children}</BusContext.Provider>;
 };

@@ -11,37 +11,104 @@ export const useLines = () => {
 };
 
 export const LineProvider = ({ children }) => {
-  // Using EXACT same data structure as your Line.jsx
+  // Updated data structure with new field names
   const [lines, setLines] = useState([
-    { id: 1, name: "Alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
-    { id: 2, name: "Alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
-    { id: 3, name: "alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
-    { id: 4, name: "Alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
-    { id: 5, name: "Alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
-    { id: 6, name: "Alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
-    { id: 7, name: "Alley", Email: "Alleyjhon@gmail.com", Role: "Region" },
+    { 
+      id_line: 1, 
+      line_name: "Main Line", 
+      description: "Main city route", 
+      distance_km: "25", 
+      id_company: 1 
+    },
+    { 
+      id_line: 2, 
+      line_name: "Express Line", 
+      description: "Fast express route", 
+      distance_km: "40", 
+      id_company: 2 
+    },
+    { 
+      id_line: 3, 
+      line_name: "Suburban Line", 
+      description: "Suburban areas route", 
+      distance_km: "35", 
+      id_company: 1 
+    },
+    { 
+      id_line: 4, 
+      line_name: "Night Line", 
+      description: "Night service route", 
+      distance_km: "30", 
+      id_company: 3 
+    },
+    { 
+      id_line: 5, 
+      line_name: "Airport Line", 
+      description: "Airport shuttle route", 
+      distance_km: "50", 
+      id_company: 2 
+    },
+    { 
+      id_line: 6, 
+      line_name: "University Line", 
+      description: "University campus route", 
+      distance_km: "20", 
+      id_company: 3 
+    },
   ]);
 
   const addLine = (newLine) => {
-    const id = lines.length > 0 
-      ? Math.max(...lines.map(l => l.id)) + 1 
-      : 1;
+    console.log("addLine called with:", newLine);
     
-    setLines([...lines, { ...newLine, id }]);
-    console.log("Added line:", newLine);
+    // Find the maximum id_line (NOT id)
+    const maxId = lines.length > 0 
+      ? Math.max(...lines.map(l => l.id_line)) 
+      : 0;
+    
+    const newId = maxId + 1;
+    
+    console.log("New line ID:", newId);
+    
+    // Create the new line with id_line field
+    const lineToAdd = {
+      ...newLine,
+      id_line: newId,  // Use id_line, not id
+    };
+    
+    setLines(prev => [...prev, lineToAdd]);
+    console.log("Line added. Total lines:", lines.length + 1);
   };
 
   const updateLine = (id, updatedData) => {
-    setLines(prev => 
-      prev.map(line => 
-        line.id === id ? { ...line, ...updatedData } : line
-      )
-    );
-    console.log("Updated line ID:", id, "with data:", updatedData);
+    console.log("=== LINE CONTEXT updateLine ===");
+    console.log("ID to update:", id);
+    console.log("Data to update with:", updatedData);
+    
+    setLines(prevLines => {
+      const updatedLines = prevLines.map(line => {
+        // Use == for comparison (string vs number) and id_line
+        if (line.id_line == id) {
+          console.log("Found line to update:", line);
+          const updatedLine = {
+            ...line,
+            ...updatedData
+          };
+          console.log("Updated line will be:", updatedLine);
+          return updatedLine;
+        }
+        return line;
+      });
+      
+      console.log("Lines AFTER update:", updatedLines);
+      return updatedLines;
+    });
+    
+    console.log("Line update function completed");
   };
 
   const deleteLine = (id) => {
-    setLines(prev => prev.filter(line => line.id !== id));
+    console.log("deleteLine called for id:", id);
+    setLines(prev => prev.filter(line => line.id_line != id));  // Use id_line and !=
     console.log("Deleted line ID:", id);
   };
 

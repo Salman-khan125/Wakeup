@@ -26,6 +26,15 @@ const CITY_OPTIONS = [
   { value: "Sydney", label: "Sydney" },
 ];
 
+// Country ID options (must match AddStop.jsx)
+const COUNTRY_OPTIONS = [
+  { value: 1, label: "USA" },
+  { value: 2, label: "UK" },
+  { value: 3, label: "Japan" },
+  { value: 4, label: "France" },
+  { value: 5, label: "Australia" },
+];
+
 const EditStop = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -33,14 +42,17 @@ const EditStop = () => {
   
   const { stops, updateStop } = useStops();
   
-  const stop = stops.find((s) => s.id === Number(id));
+  // UPDATED: Use id_stop instead of id for comparison
+  const stop = stops.find((s) => s.id_stop === Number(id));
 
+  // UPDATED: Using new field names
   const [form, setForm] = useState({
-    name: "",
+    stop_name: "",
     Latitude: "",
     longitude: "",
     city: "New York",
-    qr: "Frame1",
+    qr_code: "Frame1", // Updated field name
+    id_country: 1, // Added new field
   });
 
   // State for uploaded file
@@ -50,11 +62,12 @@ const EditStop = () => {
   useEffect(() => {
     if (stop) {
       setForm({
-        name: stop.name || "",
+        stop_name: stop.stop_name || "", // Updated field name
         Latitude: stop.Latitude || "",
         longitude: stop.longitude || "",
         city: stop.city || "New York",
-        qr: stop.qr || "Frame1",
+        qr_code: stop.qr_code || "Frame1", // Updated field name
+        id_country: stop.id_country || 1, // Added new field
       });
     }
   }, [stop]);
@@ -77,7 +90,12 @@ const EditStop = () => {
   }
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    // Handle numeric fields
+    if (e.target.name === "id_country") {
+      setForm({ ...form, [e.target.name]: parseInt(e.target.value, 10) });
+    } else {
+      setForm({ ...form, [e.target.name]: e.target.value });
+    }
   };
 
   // Handle file upload
@@ -86,6 +104,9 @@ const EditStop = () => {
     if (file) {
       setUploadedFile(file);
       setFileName(file.name);
+      
+      // If user uploads a file, set qr_code to "custom"
+      setForm({ ...form, qr_code: "custom" });
     }
   };
 
@@ -93,25 +114,31 @@ const EditStop = () => {
   const handleRemoveFile = () => {
     setUploadedFile(null);
     setFileName("");
+    // Reset qr_code to existing value when file is removed
+    setForm({ ...form, qr_code: stop.qr_code || "Frame1" });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Prepare data to send
+    // Prepare data to send (using new field names)
     const stopData = {
-      ...form,
-      // If custom file uploaded, you might want to process it
+      stop_name: form.stop_name,
+      Latitude: form.Latitude,
+      longitude: form.longitude,
+      city: form.city,
+      qr_code: form.qr_code,
+      id_country: form.id_country,
     };
 
-    // If you uploaded a file, handle it here
+    // If you uploaded a file, you might want to process it here
     if (uploadedFile) {
       console.log("Uploaded file:", uploadedFile);
       // You can convert to base64 or upload to server
     }
 
-    // UPDATE STOP USING CONTEXT FUNCTION
-    updateStop(stop.id, stopData);
+    // UPDATE STOP USING CONTEXT FUNCTION (now using id_stop)
+    updateStop(stop.id_stop, stopData);
 
     // Navigate back to stops list
     navigate("/Stop");
@@ -145,8 +172,8 @@ const EditStop = () => {
               </Typography>
               <TextField
                 fullWidth
-                name="name"
-                value={form.name}
+                name="stop_name" // Updated field name
+                value={form.stop_name}
                 onChange={handleChange}
                 placeholder="Enter stop name"
                 required
@@ -223,6 +250,32 @@ const EditStop = () => {
               />
             </Grid>
 
+            {/* Country ID */}
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+                Country *
+              </Typography>
+              <FormControl fullWidth sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 3,
+                },
+              }}>
+                <Select
+                  name="id_country" // New field
+                  value={form.id_country}
+                  onChange={handleChange}
+                  sx={{ borderRadius: 3 }}
+                  required
+                >
+                  {COUNTRY_OPTIONS.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label} (ID: {option.value})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
             {/* QR Code - File Upload */}
             <Grid item xs={12} md={6}>
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
@@ -295,8 +348,7 @@ const EditStop = () => {
                 )}
               </Box>
 
-              {/* OR use dropdown as alternative */}
-              
+              {/* QR Code dropdown */}
               <Typography variant="body2" sx={{ mt: 2, mb: 1, fontWeight: 700, color: "text.secondary" }}>
                 Or select from existing QR codes:
               </Typography>
@@ -306,14 +358,14 @@ const EditStop = () => {
                 },
               }}>
                 <Select
-                  name="qr"
-                  value={form.qr}
+                  name="qr_code" // Updated field name
+                  value={form.qr_code}
                   onChange={handleChange}
                   sx={{ borderRadius: 3 }}
                 >
                   <MenuItem value="Frame1">Frame 1</MenuItem>
                   <MenuItem value="Frame2">Frame 2</MenuItem>
-                  <MenuItem value="custom">Custom Upload</MenuItem>
+                  {uploadedFile && <MenuItem value="custom">Custom Upload</MenuItem>}
                 </Select>
               </FormControl>
             </Grid>
