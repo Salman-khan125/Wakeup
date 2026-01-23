@@ -310,12 +310,9 @@ const Dashboard = () => {
         ];
       case "Trips":
         return [
-          
           { key: "direction", label: "Direction" },
           { key: "scheduled_departure", label: "Departure Time" },
           {key : "scheduled_arrival", label: "Arival Time" },
-         
-          
         ];
       case "BusTrips":
         return [
@@ -341,6 +338,21 @@ const Dashboard = () => {
     }
   };
 
+  // Quick Actions Data
+  const quickActions = [
+    { to: "/Country/add", label: "Add Country" },
+    { to: "/Company/add", label: "Add Company" },
+    { to: "/Bus/add", label: "Add Bus" },
+    { to: "/Driver/add", label: "Add Driver" },
+    { to: "/Line/add", label: "Add Line" },
+    { to: "/Stop/add", label: "Add Stop" },
+    { to: "/Trip/add", label: "Add Trip" },
+    { to: "/BusTrip/add", label: "Add BusTrip" },
+    { to: "/Geolocation/add", label: "Add Geolocation" },
+    { to: "/Alert/add", label: "Add Alert" },
+    { to: "/Users/add", label: "Add User" },
+  ];
+
   // Function to render a module table
   const renderModuleTable = (module) => {
     if (!module.data || module.data.length === 0) return null;
@@ -348,7 +360,7 @@ const Dashboard = () => {
     const columns = getColumns(module.title);
 
     return (
-      <Grid item xs={12} md={6} lg={4} key={module.title}>
+      <Grid item xs={12} md={6} lg={4} key={`${module.title}-table`}>
         <Paper
           sx={{
             p: 2,
@@ -386,9 +398,9 @@ const Dashboard = () => {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  {columns.map((col) => (
+                  {columns.map((col, colIndex) => (
                     <TableCell
-                      key={col.key}
+                      key={`${module.title}-col-${col.key}-${colIndex}`}
                       sx={{ fontWeight: 600, fontSize: "0.875rem" }}
                     >
                       {col.label}
@@ -400,48 +412,54 @@ const Dashboard = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {module.data.slice(0, 4).map((item) => (
-                  <TableRow
-                    key={
-                      item.id ||
-                      item.id_trip ||
-                      item.id_alert ||
-                      item.id_geolocation
-                    }
-                    hover
-                  >
-                    {columns.map((col) => (
-                      <TableCell key={col.key} sx={{ fontSize: "0.875rem" }}>
-                        {item[col.key]}
+                {module.data.slice(0, 4).map((item, rowIndex) => {
+                  const itemKey = item.id ||
+                    item.id_trip ||
+                    item.id_alert ||
+                    item.id_geolocation ||
+                    `${module.title}-row-${rowIndex}`;
+                  
+                  return (
+                    <TableRow
+                      key={`${module.title}-row-${itemKey}`}
+                      hover
+                    >
+                      {columns.map((col, colIndex) => (
+                        <TableCell 
+                          key={`${module.title}-cell-${itemKey}-${col.key}-${colIndex}`} 
+                          sx={{ fontSize: "0.875rem" }}
+                        >
+                          {item[col.key]}
+                        </TableCell>
+                      ))}
+                      <TableCell>
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={() =>
+                            handleDelete(
+                              module.title,
+                              item.id ||
+                                item.id_trip ||
+                                item.id_alert ||
+                                item.id_geolocation,
+                            )
+                          }
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          color="primary"
+                          component={Link}
+                          to={`${module.link}/edit/${item.id || item.id_trip || item.id_alert || item.id_geolocation}`}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
                       </TableCell>
-                    ))}
-                    <TableCell>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() =>
-                          handleDelete(
-                            module.title,
-                            item.id ||
-                              item.id_trip ||
-                              item.id_alert ||
-                              item.id_geolocation,
-                          )
-                        }
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="primary"
-                        component={Link}
-                        to={`${module.link}/edit/${item.id || item.id_trip || item.id_alert || item.id_geolocation}`}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
@@ -462,6 +480,139 @@ const Dashboard = () => {
     );
   };
 
+  // Statistics cards data
+  const statisticsCards = [
+    {
+      title: "Total Modules",
+      value: totalModules,
+      color: "primary",
+      subtitle: `Active: ${activeModules}`,
+      subColor: "success.main",
+    },
+    {
+      title: "Total Drivers",
+      value: totalDrivers,
+      color: "success.main",
+      details: [
+        { label: "Online", value: onlineDrivers, color: "success.main" },
+        { label: "Offline", value: offlineDrivers, color: "error.main" },
+      ],
+    },
+    {
+      title: "Total Buses",
+      value: totalBuses,
+      color: "warning.main",
+      details: [
+        { label: "Active", value: activeBuses, color: "success.main" },
+        { label: "Maintenance", value: maintenanceBuses, color: "warning.main" },
+        { label: "Out of Service", value: outOfServiceBuses, color: "error.main" },
+      ],
+    },
+    {
+      title: "Total Trips",
+      value: trips.length,
+      color: "info.main",
+      details: trips.length > 0 ? [
+        { label: "Active", value: trips.filter(t => t.status?.toLowerCase() === 'active').length, color: "success.main" },
+        { label: "Completed", value: trips.filter(t => t.status?.toLowerCase() === 'completed').length, color: "warning.main" },
+        { label: "Scheduled", value: trips.filter(t => t.status?.toLowerCase() === 'scheduled').length, color: "info.main" },
+      ] : [],
+    },
+    {
+      title: "Bus Trips",
+      value: busTrips.length,
+      color: "secondary.main",
+      details: busTrips.length > 0 ? [
+        { label: "Assigned Buses", value: [...new Set(busTrips.map(bt => bt.id_bus))].length, color: "success.main" },
+        { label: "Active Trips", value: busTrips.filter(bt => {
+          const trip = trips.find(t => t.id_trip === bt.id_trip);
+          return trip?.status?.toLowerCase() === 'active';
+        }).length, color: "info.main" },
+      ] : [],
+    },
+    {
+      title: "Total Alerts",
+      value: alerts.length,
+      color: "error.main",
+      details: alerts.length > 0 ? [
+        { label: "New", value: alerts.filter((a) => a.status === "new").length, color: "error.main" },
+        { label: "In Progress", value: alerts.filter((a) => a.status === "in_progress").length, color: "warning.main" },
+        { label: "Resolved", value: alerts.filter((a) => a.status === "resolved").length, color: "success.main" },
+      ] : [],
+    },
+    {
+      title: "Geolocations",
+      value: geolocations.length,
+      color: "warning.dark",
+      details: geolocations.length > 0 ? [
+        { label: "Last 24h", value: geolocations.filter(g => {
+          const created = new Date(g.created_at || g.timestamp);
+          const now = new Date();
+          const diffHours = (now - created) / (1000 * 60 * 60);
+          return diffHours <= 24;
+        }).length, color: "info.main" },
+        { label: "Active Today", value: geolocations.filter(g => {
+          const date = new Date(g.created_at || g.timestamp);
+          const today = new Date();
+          return date.toDateString() === today.toDateString();
+        }).length, color: "success.main" },
+      ] : [],
+    },
+    {
+      title: "Companies",
+      value: companies.length,
+      color: "secondary.dark",
+      details: companies.length > 0 ? [
+        { label: "Active", value: companies.filter(c => c.status?.toLowerCase() === 'active').length, color: "success.main" },
+        { label: "Total Buses", value: buses.filter(b => companies.some(c => c.id === b.company_id)).length, color: "info.main" },
+      ] : [],
+    },
+    {
+      title: "Lines",
+      value: lines.length,
+      color: "info.dark",
+      details: lines.length > 0 ? [
+        { label: "Active", value: lines.filter(l => l.status?.toLowerCase() === 'active').length, color: "success.main" },
+        { label: "Stops", value: stops.length, color: "info.main" },
+      ] : [],
+    },
+    {
+      title: "Users",
+      value: users.length,
+      color: "grey.700",
+      details: users.length > 0 ? [
+        { label: "Admins", value: users.filter(u => u.role?.toLowerCase() === 'admin').length, color: "info.main" },
+        { label: "Drivers", value: users.filter(u => u.role?.toLowerCase() === 'driver').length, color: "success.main" },
+        { label: "Operators", value: users.filter(u => u.role?.toLowerCase() === 'operator').length, color: "warning.main" },
+      ] : [],
+    },
+  ];
+
+  // Health status indicators
+  const healthIndicators = [
+    {
+      title: "Alert Status",
+      status: alerts.filter(a => a.status === 'new').length > 3 ? 'Critical' : alerts.length > 0 ? 'Warning' : 'Normal',
+      bgColor: alerts.filter(a => a.status === 'new').length > 3 ? 'error.light' : alerts.length > 0 ? 'warning.light' : 'success.light',
+      dotColor: alerts.filter(a => a.status === 'new').length > 3 ? 'error.main' : alerts.length > 0 ? 'warning.main' : 'success.main',
+      description: `${alerts.filter(a => a.status === 'new').length} new alerts`,
+    },
+    {
+      title: "Fleet Health",
+      status: maintenanceBuses > totalBuses * 0.2 ? 'Needs Attention' : 'Good',
+      bgColor: maintenanceBuses > totalBuses * 0.2 ? 'warning.light' : 'success.light',
+      dotColor: maintenanceBuses > totalBuses * 0.2 ? 'warning.main' : 'success.main',
+      description: `${maintenanceBuses} buses in maintenance`,
+    },
+    {
+      title: "Driver Availability",
+      status: offlineDrivers > totalDrivers * 0.3 ? 'Low' : 'Good',
+      bgColor: offlineDrivers > totalDrivers * 0.3 ? 'warning.light' : 'success.light',
+      dotColor: offlineDrivers > totalDrivers * 0.3 ? 'warning.main' : 'success.main',
+      description: `${onlineDrivers} online / ${offlineDrivers} offline`,
+    },
+  ];
+
   return (
     <Box sx={{ width: "100%" }}>
       {/* Header */}
@@ -477,7 +628,7 @@ const Dashboard = () => {
       {/* Summary Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {summaryCards.map((card, index) => (
-          <Grid item xs={12} sm={6} md={4} lg={2} key={index}>
+          <Grid item xs={12} sm={6} md={4} lg={2} key={`summary-card-${card.title}-${index}`}>
             <Card
               component={Link}
               to={card.link}
@@ -544,127 +695,19 @@ const Dashboard = () => {
           Quick Actions
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={6} sm={4} md={2}>
-            <Button
-              component={Link}
-              to="/Country/add"
-              variant="contained"
-              fullWidth
-              sx={{ borderRadius: 2, py: 1.5 }}
-            >
-              Add Country
-            </Button>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Button
-              component={Link}
-              to="/Company/add"
-              variant="contained"
-              fullWidth
-              sx={{ borderRadius: 2, py: 1.5 }}
-            >
-              Add Company
-            </Button>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Button
-              component={Link}
-              to="/Bus/add"
-              variant="contained"
-              fullWidth
-              sx={{ borderRadius: 2, py: 1.5 }}
-            >
-              Add Bus
-            </Button>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Button
-              component={Link}
-              to="/Driver/add"
-              variant="contained"
-              fullWidth
-              sx={{ borderRadius: 2, py: 1.5 }}
-            >
-              Add Driver
-            </Button>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Button
-              component={Link}
-              to="/Line/add"
-              variant="contained"
-              fullWidth
-              sx={{ borderRadius: 2, py: 1.5 }}
-            >
-              Add Line
-            </Button>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Button
-              component={Link}
-              to="/Stop/add"
-              variant="contained"
-              fullWidth
-              sx={{ borderRadius: 2, py: 1.5 }}
-            >
-              Add Stop
-            </Button>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Button
-              component={Link}
-              to="/Trip/add"
-              variant="contained"
-              fullWidth
-              sx={{ borderRadius: 2, py: 1.5 }}
-            >
-              Add Trip
-            </Button>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Button
-              component={Link}
-              to="/BusTrip/add"
-              variant="contained"
-              fullWidth
-              sx={{ borderRadius: 2, py: 1.5 }}
-            >
-              Add BusTrip
-            </Button>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Button
-              component={Link}
-              to="/Geolocation/add"
-              variant="contained"
-              fullWidth
-              sx={{ borderRadius: 2, py: 1.5 }}
-            >
-              Add Geolocation
-            </Button>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Button
-              component={Link}
-              to="/Alert/add"
-              variant="contained"
-              fullWidth
-              sx={{ borderRadius: 2, py: 1.5 }}
-            >
-              Add Alert
-            </Button>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <Button
-              component={Link}
-              to="/Users/add"
-              variant="contained"
-              fullWidth
-              sx={{ borderRadius: 2, py: 1.5 }}
-            >
-              Add User
-            </Button>
-          </Grid>
+          {quickActions.map((action, index) => (
+            <Grid item xs={6} sm={4} md={2} key={`quick-action-${action.label}-${index}`}>
+              <Button
+                component={Link}
+                to={action.to}
+                variant="contained"
+                fullWidth
+                sx={{ borderRadius: 2, py: 1.5 }}
+              >
+                {action.label}
+              </Button>
+            </Grid>
+          ))}
         </Grid>
       </Paper>
 
@@ -678,7 +721,6 @@ const Dashboard = () => {
       </Grid>
 
       {/* Statistics Section */}
-            {/* Statistics Section */}
       <Paper
         sx={{
           mt: 4,
@@ -692,237 +734,39 @@ const Dashboard = () => {
         </Typography>
 
         <Grid container spacing={3}>
-          {/* TOTAL MODULES */}
-          <Grid item xs={12} sm={6} md={3} lg={2.4}>
-            <Paper sx={{ p: 2, textAlign: "center", borderRadius: 3, height: '100%' }}>
-              <Typography variant="h4" fontWeight="700" color="primary">
-                {totalModules}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Total Modules
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{ mt: 1, color: "success.main", fontWeight: 600 }}
-              >
-                Active: {activeModules}
-              </Typography>
-            </Paper>
-          </Grid>
-
-          {/* DRIVERS */}
-          <Grid item xs={12} sm={6} md={3} lg={2.4}>
-            <Paper sx={{ p: 2, textAlign: "center", borderRadius: 3, height: '100%' }}>
-              <Typography variant="h4" fontWeight="700" color="success.main">
-                {totalDrivers}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Total Drivers
-              </Typography>
-              <Typography variant="body2" sx={{ mt: 1, color: "success.main" }}>
-                Online: {onlineDrivers}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "error.main" }}>
-                Offline: {offlineDrivers}
-              </Typography>
-            </Paper>
-          </Grid>
-
-          {/* BUSES */}
-          <Grid item xs={12} sm={6} md={3} lg={2.4}>
-            <Paper sx={{ p: 2, textAlign: "center", borderRadius: 3, height: '100%' }}>
-              <Typography variant="h4" fontWeight="700" color="warning.main">
-                {totalBuses}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Total Buses
-              </Typography>
-              <Typography variant="body2" sx={{ mt: 1, color: "success.main" }}>
-                Active: {activeBuses}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "warning.main" }}>
-                Maintenance: {maintenanceBuses}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "error.main" }}>
-                Out of Service: {outOfServiceBuses}
-              </Typography>
-            </Paper>
-          </Grid>
-
-          {/* TRIPS STATISTICS */}
-          <Grid item xs={12} sm={6} md={3} lg={2.4}>
-            <Paper sx={{ p: 2, textAlign: "center", borderRadius: 3, height: '100%' }}>
-              <Typography variant="h4" fontWeight="700" color="info.main">
-                {trips.length}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Total Trips
-              </Typography>
-              {trips.length > 0 && (
-                <>
-                  <Typography variant="body2" sx={{ mt: 1, color: "success.main" }}>
-                    Active: {trips.filter(t => t.status?.toLowerCase() === 'active').length}
+          {statisticsCards.map((stat, index) => (
+            <Grid item xs={12} sm={6} md={3} lg={2.4} key={`stat-card-${stat.title}-${index}`}>
+              <Paper sx={{ p: 2, textAlign: "center", borderRadius: 3, height: '100%' }}>
+                <Typography variant="h4" fontWeight="700" color={stat.color}>
+                  {stat.value}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                  {stat.title}
+                </Typography>
+                {stat.subtitle && (
+                  <Typography
+                    variant="body2"
+                    sx={{ mt: 1, color: stat.subColor, fontWeight: 600 }}
+                  >
+                    {stat.subtitle}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "warning.main" }}>
-                    Completed: {trips.filter(t => t.status?.toLowerCase() === 'completed').length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "info.main" }}>
-                    Scheduled: {trips.filter(t => t.status?.toLowerCase() === 'scheduled').length}
-                  </Typography>
-                </>
-              )}
-            </Paper>
-          </Grid>
-
-          {/* BUS TRIPS STATISTICS */}
-          <Grid item xs={12} sm={6} md={3} lg={2.4}>
-            <Paper sx={{ p: 2, textAlign: "center", borderRadius: 3, height: '100%' }}>
-              <Typography variant="h4" fontWeight="700" color="secondary.main">
-                {busTrips.length}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Bus Trips
-              </Typography>
-              {busTrips.length > 0 && (
-                <>
-                  <Typography variant="body2" sx={{ mt: 1, color: "success.main" }}>
-                    Assigned Buses: {[...new Set(busTrips.map(bt => bt.id_bus))].length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "info.main" }}>
-                    Active Trips: {busTrips.filter(bt => {
-                      const trip = trips.find(t => t.id_trip === bt.id_trip);
-                      return trip?.status?.toLowerCase() === 'active';
-                    }).length}
-                  </Typography>
-                </>
-              )}
-            </Paper>
-          </Grid>
-
-          {/* ALERTS */}
-          <Grid item xs={12} sm={6} md={3} lg={2.4}>
-            <Paper sx={{ p: 2, textAlign: "center", borderRadius: 3, height: '100%' }}>
-              <Typography variant="h4" fontWeight="700" color="error.main">
-                {alerts.length}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Total Alerts
-              </Typography>
-              {alerts.length > 0 && (
-                <>
-                  <Typography variant="body2" sx={{ mt: 1, color: "error.main" }}>
-                    New: {alerts.filter((a) => a.status === "new").length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "warning.main" }}>
-                    In Progress: {alerts.filter((a) => a.status === "in_progress").length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "success.main" }}>
-                    Resolved: {alerts.filter((a) => a.status === "resolved").length}
-                  </Typography>
-                </>
-              )}
-            </Paper>
-          </Grid>
-
-          {/* GEOLOCATIONS */}
-          <Grid item xs={12} sm={6} md={3} lg={2.4}>
-            <Paper sx={{ p: 2, textAlign: "center", borderRadius: 3, height: '100%' }}>
-              <Typography variant="h4" fontWeight="700" color="warning.dark">
-                {geolocations.length}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Geolocations
-              </Typography>
-              {geolocations.length > 0 && (
-                <>
-                  <Typography variant="body2" sx={{ mt: 1, color: "info.main" }}>
-                    Last 24h: {geolocations.filter(g => {
-                      const created = new Date(g.created_at || g.timestamp);
-                      const now = new Date();
-                      const diffHours = (now - created) / (1000 * 60 * 60);
-                      return diffHours <= 24;
-                    }).length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "success.main" }}>
-                    Active Today: {geolocations.filter(g => {
-                      const date = new Date(g.created_at || g.timestamp);
-                      const today = new Date();
-                      return date.toDateString() === today.toDateString();
-                    }).length}
-                  </Typography>
-                </>
-              )}
-            </Paper>
-          </Grid>
-
-          {/* COMPANIES */}
-          <Grid item xs={12} sm={6} md={3} lg={2.4}>
-            <Paper sx={{ p: 2, textAlign: "center", borderRadius: 3, height: '100%' }}>
-              <Typography variant="h4" fontWeight="700" color="secondary.dark">
-                {companies.length}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Companies
-              </Typography>
-              {companies.length > 0 && (
-                <>
-                  <Typography variant="body2" sx={{ mt: 1, color: "success.main" }}>
-                    Active: {companies.filter(c => c.status?.toLowerCase() === 'active').length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "info.main" }}>
-                    Total Buses: {buses.filter(b => companies.some(c => c.id === b.company_id)).length}
-                  </Typography>
-                </>
-              )}
-            </Paper>
-          </Grid>
-
-          {/* LINES */}
-          <Grid item xs={12} sm={6} md={3} lg={2.4}>
-            <Paper sx={{ p: 2, textAlign: "center", borderRadius: 3, height: '100%' }}>
-              <Typography variant="h4" fontWeight="700" color="info.dark">
-                {lines.length}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Lines
-              </Typography>
-              {lines.length > 0 && (
-                <>
-                  <Typography variant="body2" sx={{ mt: 1, color: "success.main" }}>
-                    Active: {lines.filter(l => l.status?.toLowerCase() === 'active').length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "info.main" }}>
-                    Stops: {stops.length}
-                  </Typography>
-                </>
-              )}
-            </Paper>
-          </Grid>
-
-          {/* USERS */}
-          <Grid item xs={12} sm={6} md={3} lg={2.4}>
-            <Paper sx={{ p: 2, textAlign: "center", borderRadius: 3, height: '100%' }}>
-              <Typography variant="h4" fontWeight="700" color="grey.700">
-                {users.length}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Users
-              </Typography>
-              {users.length > 0 && (
-                <>
-                  <Typography variant="body2" sx={{ mt: 1, color: "info.main" }}>
-                    Admins: {users.filter(u => u.role?.toLowerCase() === 'admin').length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "success.main" }}>
-                    Drivers: {users.filter(u => u.role?.toLowerCase() === 'driver').length}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "warning.main" }}>
-                    Operators: {users.filter(u => u.role?.toLowerCase() === 'operator').length}
-                  </Typography>
-                </>
-              )}
-            </Paper>
-          </Grid>
+                )}
+                {stat.details && stat.details.length > 0 && (
+                  <Box sx={{ mt: 1 }}>
+                    {stat.details.map((detail, detailIndex) => (
+                      <Typography 
+                        key={`${stat.title}-detail-${detailIndex}`}
+                        variant="body2" 
+                        sx={{ color: detail.color }}
+                      >
+                        {detail.label}: {detail.value}
+                      </Typography>
+                    ))}
+                  </Box>
+                )}
+              </Paper>
+            </Grid>
+          ))}
         </Grid>
 
         {/* SYSTEM STATUS INDICATORS */}
@@ -931,97 +775,33 @@ const Dashboard = () => {
             System Health
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                p: 2, 
-                borderRadius: 1,
-                bgcolor: alerts.length > 0 ? 
-                  (alerts.filter(a => a.status === 'new').length > 3 ? 
-                    'error.light' : 'warning.light') : 
-                  'success.light'
-              }}>
+            {healthIndicators.map((indicator, index) => (
+              <Grid item xs={12} sm={4} key={`health-indicator-${indicator.title}-${index}`}>
                 <Box sx={{ 
-                  width: 12, 
-                  height: 12, 
-                  borderRadius: '50%', 
-                  mr: 2,
-                  bgcolor: alerts.length > 0 ? 
-                    (alerts.filter(a => a.status === 'new').length > 3 ? 
-                      'error.main' : 'warning.main') : 
-                    'success.main'
-                }} />
-                <Box>
-                  <Typography variant="body2" fontWeight={600}>
-                    Alert Status: {alerts.filter(a => a.status === 'new').length > 3 ? 
-                      'Critical' : 
-                      alerts.length > 0 ? 'Warning' : 'Normal'}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {alerts.filter(a => a.status === 'new').length} new alerts
-                  </Typography>
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  p: 2, 
+                  borderRadius: 1,
+                  bgcolor: indicator.bgColor
+                }}>
+                  <Box sx={{ 
+                    width: 12, 
+                    height: 12, 
+                    borderRadius: '50%', 
+                    mr: 2,
+                    bgcolor: indicator.dotColor
+                  }} />
+                  <Box>
+                    <Typography variant="body2" fontWeight={600}>
+                      {indicator.title}: {indicator.status}
+                    </Typography>
+                    <Typography variant="caption" color="textSecondary">
+                      {indicator.description}
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-            </Grid>
-            
-            <Grid item xs={12} sm={4}>
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                p: 2, 
-                borderRadius: 2,
-                bgcolor: maintenanceBuses > totalBuses * 0.2 ? 
-                  'warning.light' : 'success.light'
-              }}>
-                <Box sx={{ 
-                  width: 12, 
-                  height: 12, 
-                  borderRadius: '50%', 
-                  mr: 2,
-                  bgcolor: maintenanceBuses > totalBuses * 0.2 ? 
-                    'warning.main' : 'success.main'
-                }} />
-                <Box>
-                  <Typography variant="body2" fontWeight={600}>
-                    Fleet Health: {maintenanceBuses > totalBuses * 0.2 ? 
-                      'Needs Attention' : 'Good'}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {maintenanceBuses} buses in maintenance
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
-            
-            <Grid item xs={12} sm={4}>
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                p: 2, 
-                borderRadius: 2,
-                bgcolor: offlineDrivers > totalDrivers * 0.3 ? 
-                  'warning.light' : 'success.light'
-              }}>
-                <Box sx={{ 
-                  width: 12, 
-                  height: 12, 
-                  borderRadius: '50%', 
-                  mr: 2,
-                  bgcolor: offlineDrivers > totalDrivers * 0.3 ? 
-                    'warning.main' : 'success.main'
-                }} />
-                <Box>
-                  <Typography variant="body2" fontWeight={600}>
-                    Driver Availability: {offlineDrivers > totalDrivers * 0.3 ? 
-                      'Low' : 'Good'}
-                  </Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {onlineDrivers} online / {offlineDrivers} offline
-                  </Typography>
-                </Box>
-              </Box>
-            </Grid>
+              </Grid>
+            ))}
           </Grid>
         </Box>
       </Paper>
