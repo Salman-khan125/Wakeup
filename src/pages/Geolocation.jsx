@@ -14,7 +14,10 @@ import {
   IconButton,
   Pagination,
   useTheme,
+  InputAdornment,
 } from "@mui/material";
+
+import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -25,10 +28,8 @@ const PAGE_SIZE = 4;
 
 const Geolocation = () => {
   const theme = useTheme();
-  
-  // GET DATA FROM CONTEXT
   const { geolocations, deleteGeolocation } = useGeolocations();
-  
+
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -38,7 +39,6 @@ const Geolocation = () => {
     );
     if (!confirmed) return;
 
-    // USE CONTEXT FUNCTION
     deleteGeolocation(id_geo);
 
     if ((page - 1) * PAGE_SIZE >= geolocations.length - 1) {
@@ -50,115 +50,153 @@ const Geolocation = () => {
     setPage(value);
   };
 
-  // Helper function to format timestamp
+  // Format timestamp
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return "N/A";
     try {
-      const date = new Date(timestamp);
-      return date.toLocaleString();
-    } catch (error) {
+      return new Date(timestamp).toLocaleString();
+    } catch {
       return timestamp;
     }
   };
 
-  // SEARCH FUNCTIONALITY
-  const filteredGeolocations = geolocations.filter(geo => {
+  // SEARCH
+  const filteredGeolocations = geolocations.filter((geo) => {
     const searchLower = searchTerm.toLowerCase();
     const busTripId = (geo.id_bus_trip || "").toString().toLowerCase();
     const latitude = (geo.latitude || "").toString().toLowerCase();
     const longitude = (geo.longitude || "").toString().toLowerCase();
     const timestamp = formatTimestamp(geo.timestamp).toLowerCase();
-    
-    return busTripId.includes(searchLower) ||
-           latitude.includes(searchLower) ||
-           longitude.includes(searchLower) ||
-           timestamp.includes(searchLower);
+
+    return (
+      busTripId.includes(searchLower) ||
+      latitude.includes(searchLower) ||
+      longitude.includes(searchLower) ||
+      timestamp.includes(searchLower)
+    );
   });
 
-  const currentGeolocations = filteredGeolocations.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const currentGeolocations = filteredGeolocations.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE
+  );
+
   const pageCount = Math.ceil(filteredGeolocations.length / PAGE_SIZE);
 
   return (
     <Box sx={{ width: "100%" }}>
-      {/* Header - Same structure as Trip */}
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight="600">
-          Geolocation
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Information about your current plan and usages
-        </Typography>
-      </Box>
-
-      {/* Search + Add - Same structure as Trip */}
+      {/* Header + Search */}
       <Box
         sx={{
+          mb: 4,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mb: 3,
           flexWrap: "wrap",
           gap: 2,
-          backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+          mt: 2,
         }}
       >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Typography variant="h5" fontWeight="600">
+            Welcome Back
+          </Typography>
+          <Box
+            component="img"
+            src="/assets/country/hand.png"
+            alt="welcome icon"
+            sx={{ width: 37, height: 37, objectFit: "contain" }}
+          />
+        </Box>
+
         <TextField
           placeholder="Search"
           variant="outlined"
           size="small"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ color: "#9e9e9e" }} />
+              </InputAdornment>
+            ),
+          }}
           sx={{
-            flex: 1,
-            minWidth: 200,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: 3,
-            },
+            minWidth: { sm: 500, md: 727 },
+            backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
+            border: "1px solid #F5F7FB",
+            borderRadius: 48,
+            "& .MuiOutlinedInput-root": { borderRadius: 48 },
           }}
         />
+      </Box>
+
+      {/* Title + Add */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 4,
+          mt: 2,
+        }}
+      >
+        <Typography variant="h6" fontWeight="600">
+          Geolocations
+        </Typography>
+
         <Button
           component={Link}
           to="/Geolocation/add"
           variant="contained"
-          sx={{ height: 40, borderRadius: 3 }}
+          sx={{
+            height: 40,
+            borderRadius: 3,
+            backgroundColor: "#1467D9",
+            color: "#ffffff",
+            textTransform: "none",
+            fontWeight: 600,
+            px: 3,
+            boxShadow: "0px 4px 10px rgba(20, 103, 217, 0.25)",
+            "&:hover": {
+              backgroundColor: "#0f57b8",
+              boxShadow: "0px 6px 14px rgba(20, 103, 217, 0.35)",
+            },
+          }}
         >
-          + Add
+          Add Geolocation
         </Button>
       </Box>
 
-      {/* Main Table - Using Geolocation data */}
+      {/* Main Table */}
       <TableContainer
         component={Paper}
         sx={{
           mb: 2,
           borderRadius: 2,
           overflowX: "auto",
-          backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+          backgroundColor:
+            theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
         }}
       >
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                #
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Bus Trip ID
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Latitude
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Longitude
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Timestamp
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Action
-              </TableCell>
+              {["#", "Bus Trip ID", "Latitude", "Longitude", "Timestamp", "Action"].map(
+                (header) => (
+                  <TableCell
+                    key={header}
+                    sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+                  >
+                    {header}
+                  </TableCell>
+                )
+              )}
             </TableRow>
           </TableHead>
+
           <TableBody>
             {currentGeolocations.map((geo) => (
               <TableRow
@@ -208,7 +246,7 @@ const Geolocation = () => {
         </Table>
       </TableContainer>
 
-      {/* Pagination - Same as Trip */}
+      {/* Pagination */}
       {pageCount > 1 && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 4 }}>
           <Pagination
@@ -220,30 +258,31 @@ const Geolocation = () => {
         </Box>
       )}
 
-      {/* Geolocation Display List - Same structure as Trip */}
+      {/* Display Table */}
       <Box>
         <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
           Geolocation Display
         </Typography>
+
         <TableContainer
           component={Paper}
           sx={{
             borderRadius: 2,
             overflowX: "auto",
-            backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+            backgroundColor:
+              theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
           }}
         >
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell sx={{ width: 50 }}>#</TableCell>
-                <TableCell
-                  sx={{ fontWeight: 600, color: theme.palette.text.primary }}
-                >
+                <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                   List
                 </TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {currentGeolocations.map((geo) => (
                 <TableRow key={geo.id_geo}>

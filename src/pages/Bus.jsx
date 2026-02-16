@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -14,36 +14,35 @@ import {
   IconButton,
   Pagination,
   useTheme,
+  InputAdornment,
 } from "@mui/material";
+
+import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Link } from "react-router-dom";
-import { useBuses } from "../context/BusContext"; // ADD THIS IMPORT
+import { useBuses } from "../context/BusContext";
 
 const STATUS_IMAGE_MAP = {
- active: "/assets/bus/Active.png",
- maintenance: "/assets/bus/maintenance.png",
- outofservice: "/assets/bus/Outofservice.png",
+  active: "/assets/bus/Active.png",
+  maintenance: "/assets/bus/maintenance.png",
+  outofservice: "/assets/bus/Outofservice.png",
 };
 
 const STATUS_DIMENSIONS = {
- active: { width: "auto", height: 40 },
- maintenance: { width: "auto", height: 40 },
- outofservice: { width: "auto", height: 40 },
+  active: { width: "auto", height: 40 },
+  maintenance: { width: "auto", height: 40 },
+  outofservice: { width: "auto", height: 40 },
 };
 
 const PAGE_SIZE = 4;
 
 const Bus = () => {
   const theme = useTheme();
-  
-  // OLD WAY (remove this):
-  // const [buses, setBuses] = useState(allBuses);
-  
-  // NEW WAY: Get from Context API
   const { buses, deleteBus } = useBuses();
-  
+
   const [page, setPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleChange = (event, value) => {
     setPage(value);
@@ -55,8 +54,6 @@ const Bus = () => {
     );
     if (!confirmed) return;
 
-    // OLD WAY: setBuses((prev) => prev.filter((b) => b.id !== id));
-    // NEW WAY: Use context function
     deleteBus(id);
 
     if ((page - 1) * PAGE_SIZE >= buses.length - 1) {
@@ -64,92 +61,155 @@ const Bus = () => {
     }
   };
 
-  // Use buses from context
-  const currentBuses = buses.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const pageCount = Math.ceil(buses.length / PAGE_SIZE);
+  // Reset page when searching
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
+
+  // 🔎 Filtering Logic
+  const filteredBuses = buses.filter((bus) =>
+    bus.plate_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    bus.model?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    bus.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    bus.capacity?.toString().includes(searchTerm)
+  );
+
+  const currentBuses = filteredBuses.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE
+  );
+
+  const pageCount = Math.ceil(filteredBuses.length / PAGE_SIZE);
 
   return (
     <Box sx={{ width: "100%" }}>
       {/* Header */}
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight="600">
-          Bus
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Information about your current plan and usages
-        </Typography>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 2,
+          mt: 2,
+        }}
+      >
+        {/* Left */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Typography variant="h5" fontWeight="600">
+            Welcome Back
+          </Typography>
+          <Box
+            component="img"
+            src="/assets/country/hand.png"
+            alt="welcome icon"
+            sx={{
+              width: 37,
+              height: 37,
+              objectFit: "contain",
+            }}
+          />
+        </Box>
+
+        {/* Search */}
+        <TextField
+          placeholder="Search"
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ color: "#9e9e9e" }} />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            minWidth: { sm: 500, md: 727 },
+            backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
+            borderRadius: 48,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: 48,
+            },
+          }}
+        />
       </Box>
 
-      {/* Search + Add */}
+      {/* Bus + Add Button */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mb: 3,
-          flexWrap: "wrap",
-          gap: 2,
-          backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+          mb: 4,
         }}
       >
-        <TextField
-          placeholder="Search"
-          variant="outlined"
-          size="small"
-          sx={{
-            flex: 1,
-            minWidth: 200,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: 3,
-            },
-          }}
-        />
+        <Typography variant="h6" fontWeight="600">
+          Bus
+        </Typography>
+
         <Button
           component={Link}
           to="/Bus/add"
           variant="contained"
-          sx={{ height: 40, borderRadius: 3 }}
+          sx={{
+            height: 40,
+            borderRadius: 3,
+            backgroundColor: "#1467D9",
+            color: "#ffffff",
+            textTransform: "none",
+            fontWeight: 600,
+            px: 3,
+            boxShadow: "0px 4px 10px rgba(20, 103, 217, 0.25)",
+            "&:hover": {
+              backgroundColor: "#0f57b8",
+              boxShadow: "0px 6px 14px rgba(20, 103, 217, 0.35)",
+            },
+          }}
         >
-          + Add
+          Add Bus
         </Button>
       </Box>
 
-      {/* Main Table */}
+      {/* Table */}
       <TableContainer
         component={Paper}
         sx={{
           mb: 2,
           borderRadius: 2,
           overflowX: "auto",
-          backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+          backgroundColor:
+            theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
         }}
       >
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                #
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Vehicle Number
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                No of Seat
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Bus Model
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Bus Status
-              </TableCell>
-               <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Company
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                Action
-              </TableCell>
+              {[
+                "#",
+                "Vehicle Number",
+                "No of Seat",
+                "Bus Model",
+                "Bus Status",
+                "Company",
+                "Action",
+              ].map((header) => (
+                <TableCell
+                  key={header}
+                  sx={{
+                    fontWeight: 600,
+                    color: theme.palette.text.primary,
+                  }}
+                >
+                  {header}
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
+
           <TableBody>
             {currentBuses.map((bus) => (
               <TableRow
@@ -157,7 +217,9 @@ const Bus = () => {
                 sx={{
                   "&:hover": {
                     backgroundColor:
-                      theme.palette.mode === "light" ? "#f5f5f5" : "#2c2c3e",
+                      theme.palette.mode === "light"
+                        ? "#f5f5f5"
+                        : "#2c2c3e",
                   },
                 }}
               >
@@ -165,36 +227,40 @@ const Bus = () => {
                 <TableCell>{bus.plate_number}</TableCell>
                 <TableCell>{bus.capacity}</TableCell>
                 <TableCell>{bus.model}</TableCell>
-               
-                
-                
+
                 <TableCell>
-               {STATUS_IMAGE_MAP[bus.status?.toLowerCase().replace(/\s/g, "")] ? (
-    <Box
-      component="img"
-      src={STATUS_IMAGE_MAP[bus.status.toLowerCase().replace(/\s/g, "")]}
-      alt={bus.status}
-      sx={{
-        width:
-          STATUS_DIMENSIONS[bus.status.toLowerCase().replace(/\s/g, "")]
-            ?.width || "auto",
-        height:
-          STATUS_DIMENSIONS[bus.status.toLowerCase().replace(/\s/g, "")]
-            ?.height || 40,
-        objectFit: "contain",
-      }}
-    />
-  ) : (
-  <Typography variant="body2" color="textSecondary">
-    No status
-  </Typography>
-)}
-
-
-
-
+                  {STATUS_IMAGE_MAP[
+                    bus.status?.toLowerCase().replace(/\s/g, "")
+                  ] ? (
+                    <Box
+                      component="img"
+                      src={
+                        STATUS_IMAGE_MAP[
+                          bus.status.toLowerCase().replace(/\s/g, "")
+                        ]
+                      }
+                      alt={bus.status}
+                      sx={{
+                        width:
+                          STATUS_DIMENSIONS[
+                            bus.status.toLowerCase().replace(/\s/g, "")
+                          ]?.width || "auto",
+                        height:
+                          STATUS_DIMENSIONS[
+                            bus.status.toLowerCase().replace(/\s/g, "")
+                          ]?.height || 40,
+                        objectFit: "contain",
+                      }}
+                    />
+                  ) : (
+                    <Typography variant="body2" color="text.secondary">
+                      No status
+                    </Typography>
+                  )}
                 </TableCell>
-                 <TableCell> {bus.id_company} </TableCell>
+
+                <TableCell>{bus.id_company}</TableCell>
+
                 <TableCell>
                   <IconButton
                     size="small"
@@ -204,6 +270,7 @@ const Bus = () => {
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
+
                   <IconButton
                     size="small"
                     color="error"
@@ -214,6 +281,16 @@ const Bus = () => {
                 </TableCell>
               </TableRow>
             ))}
+
+            {currentBuses.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  <Typography variant="body2" color="text.secondary">
+                    No buses found
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -229,40 +306,6 @@ const Bus = () => {
           />
         </Box>
       )}
-
-      {/* Bus Display List */}
-      <Box>
-        <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
-          Bus Display
-        </Typography>
-        <TableContainer
-          component={Paper}
-          sx={{
-            borderRadius: 2,
-            overflowX: "auto",
-            backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
-          }}
-        >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ width: 50 }}>#</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                  List
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {currentBuses.map((bus) => (
-                <TableRow key={bus.id_bus}>
-                  <TableCell>{bus.id_bus}</TableCell>
-                  <TableCell>{bus.plate_number}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
     </Box>
   );
 };

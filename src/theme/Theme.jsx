@@ -3,7 +3,7 @@ import { createTheme } from "@mui/material/styles";
 // Common settings for both light and dark
 const commonSettings = {
   typography: {
-    fontFamily: "Roboto, Arial, sans-serif",
+    fontFamily: "poppins, sans-serif",
   },
 };
 
@@ -16,7 +16,7 @@ export const getTheme = (mode) =>
         ? {
             primary: { main: "#2962ff" },
             background: {
-              default: "#f4f6f8",
+              default: "#ffff",
               paper: "#ecf6ffff",
             },
             text: { primary: "#1a1a1a", secondary: "#555555" },

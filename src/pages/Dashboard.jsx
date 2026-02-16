@@ -45,6 +45,7 @@ import { useBusTrips } from "../context/BusTripContext";
 import { useGeolocations } from "../context/GeolocationContext";
 import { useAlerts } from "../context/AlertContext";
 
+
 const Dashboard = () => {
   const theme = useTheme();
 
@@ -110,10 +111,10 @@ const Dashboard = () => {
   // Drivers
   const totalDrivers = drivers.length;
   const onlineDrivers = drivers.filter(
-    (d) => d.status?.toUpperCase() === "ONLINE ",
+    (d) => (d.is_online || d.status || "").toLowerCase().trim() === "online",
   ).length;
   const offlineDrivers = drivers.filter(
-    (d) => d.status?.toUpperCase() === "OFFLINE",
+    (d) => (d.is_online || d.status || "").toLowerCase().trim() === "offline",
   ).length;
 
   // Buses
@@ -586,6 +587,24 @@ const Dashboard = () => {
         { label: "Operators", value: users.filter(u => u.role?.toLowerCase() === 'operator').length, color: "warning.main" },
       ] : [],
     },
+    {
+      title: "Countries",
+      value: countries.length,
+      color: "primary.main",
+      details: countries.length > 0 ? [
+        { label: "Total", value: countries.length, color: "primary.main" },
+        { label: "Regions", value: [...new Set(countries.map(c => c.region).filter(Boolean))].length, color: "info.main" },
+      ] : [],
+    },
+    {
+      title: "Stops",
+      value: stops.length,
+      color: "error.main",
+      details: stops.length > 0 ? [
+        { label: "Total", value: stops.length, color: "error.main" },
+        { label: "Cities", value: [...new Set(stops.map(s => s.city).filter(Boolean))].length, color: "info.main" },
+      ] : [],
+    },
   ];
 
   // Health status indicators
@@ -597,6 +616,7 @@ const Dashboard = () => {
       dotColor: alerts.filter(a => a.status === 'new').length > 3 ? 'error.main' : alerts.length > 0 ? 'warning.main' : 'success.main',
       description: `${alerts.filter(a => a.status === 'new').length} new alerts`,
     },
+    
     {
       title: "Fleet Health",
       status: maintenanceBuses > totalBuses * 0.2 ? 'Needs Attention' : 'Good',
@@ -610,6 +630,8 @@ const Dashboard = () => {
       bgColor: offlineDrivers > totalDrivers * 0.3 ? 'warning.light' : 'success.light',
       dotColor: offlineDrivers > totalDrivers * 0.3 ? 'warning.main' : 'success.main',
       description: `${onlineDrivers} online / ${offlineDrivers} offline`,
+      
+      
     },
   ];
 
@@ -621,7 +643,7 @@ const Dashboard = () => {
           Dashboard Overview
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          Welcome to your transportation management system
+          Welcome to your transportation management system 
         </Typography>
       </Box>
 
@@ -689,8 +711,10 @@ const Dashboard = () => {
           mb: 4,
           borderRadius: 3,
           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
-        }}
+        }} 
       >
+      
+       
         <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
           Quick Actions
         </Typography>
@@ -774,32 +798,34 @@ const Dashboard = () => {
           <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
             System Health
           </Typography>
-          <Grid container spacing={2}>
+          <Grid container spacing={3}>
             {healthIndicators.map((indicator, index) => (
-              <Grid item xs={12} sm={4} key={`health-indicator-${indicator.title}-${index}`}>
-                <Box sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  p: 2, 
-                  borderRadius: 1,
-                  bgcolor: indicator.bgColor
-                }}>
+              <Grid item xs={12} sm={6} md={4} key={`health-indicator-${indicator.title}-${index}`}>
+                <Paper sx={{ p: 2, textAlign: "center", borderRadius: 3, height: '100%' }}>
                   <Box sx={{ 
-                    width: 12, 
-                    height: 12, 
-                    borderRadius: '50%', 
-                    mr: 2,
-                    bgcolor: indicator.dotColor
-                  }} />
-                  <Box>
-                    <Typography variant="body2" fontWeight={600}>
-                      {indicator.title}: {indicator.status}
-                    </Typography>
-                    <Typography variant="caption" color="textSecondary">
-                      {indicator.description}
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    mb: 1
+                  }}>
+                    <Box sx={{ 
+                      width: 12, 
+                      height: 12, 
+                      borderRadius: '50%', 
+                      mr: 1.5,
+                      bgcolor: indicator.dotColor
+                    }} />
+                    <Typography variant="body2" fontWeight={600} color={indicator.dotColor}>
+                      {indicator.status}
                     </Typography>
                   </Box>
-                </Box>
+                  <Typography variant="h6" fontWeight="600" sx={{ mb: 0.5 }}>
+                    {indicator.title}
+                  </Typography>
+                  <Typography variant="caption" color="textSecondary">
+                    {indicator.description}
+                  </Typography>
+                </Paper>
               </Grid>
             ))}
           </Grid>

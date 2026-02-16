@@ -14,32 +14,29 @@ import {
   IconButton,
   Pagination,
   useTheme,
+  InputAdornment,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Link } from "react-router-dom";
-import { useCountries } from "../context/CountryContext"; // ADD THIS IMPORT
+import { useCountries } from "../context/CountryContext";
 
 const PAGE_SIZE = 4;
 
 const Country = () => {
   const theme = useTheme();
-  
-
-  
-  // NEW WAY: Get from Context API
   const { countries, deleteCountry } = useCountries();
-  
+
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleDelete = (id) => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this country?" // Changed "company" to "country"
+      "Are you sure you want to delete this country?",
     );
     if (!confirmed) return;
 
-   
     deleteCountry(id);
 
     if ((page - 1) * PAGE_SIZE >= countries.length - 1) {
@@ -51,60 +48,124 @@ const Country = () => {
     setPage(value);
   };
 
- const filteredCountries = countries.filter (country =>
-  country.name.toLowerCase().includes(searchTerm.toLowerCase())||
-  country.code.toLowerCase().includes(searchTerm.toLowerCase())||
-  country.region.toLowerCase().includes(searchTerm.toLowerCase())
- )
-  const currentCountries = filteredCountries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const filteredCountries = countries.filter(
+    (country) =>
+      country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      country.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      country.region.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  const currentCountries = filteredCountries.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE,
+  );
   const pageCount = Math.ceil(filteredCountries.length / PAGE_SIZE);
 
   return (
-    <Box sx={{ width: "100%" }}>
-      {/* Header */}
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight="600">
-          Country
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Information about your current plan and usages
-        </Typography>
-      </Box>
-
-      {/* Search + Add */}
+    <Box
+      sx={{
+        width: "100%",
+        borderRadius: 2,
+      }}
+    >
+      {/* Welcome Back + Icon + Search */}
       <Box
         sx={{
+          mb: 4, // increase vertical space below this whole block
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mb: 3,
           flexWrap: "wrap",
           gap: 2,
-          backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+          mt: 2, // push this block a bit down from the top
         }}
       >
+        {/* Left: Welcome Back + Icon */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1, // spacing between text and icon
+          }}
+        >
+          <Typography variant="h5" fontWeight="600">
+            Welcome Back
+          </Typography>
+          <Box
+            component="img"
+            src="/assets/country/hand.png"
+            alt="welcome icon"
+            sx={{
+              width: 37,
+              height: 37,
+              objectFit: "contain",
+            }}
+          />
+        </Box>
+
+        {/* Right: Search */}
         <TextField
           placeholder="Search"
           variant="outlined"
           size="small"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ color: "#9e9e9e" }} />
+              </InputAdornment>
+            ),
+          }}
           sx={{
-            flex: 1,
-            minWidth: 200,
+            minWidth: { sm: 500, md: 727 },
+            backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
+            border: "1px solid #F5F7FB",
+            borderRadius: 48,
             "& .MuiOutlinedInput-root": {
-              borderRadius: 3,
+              borderRadius: 48,
             },
           }}
         />
-        {/* Fix Add button to link to AddCountry page */}
-        <Button 
+      </Box>
+
+      {/* Country + Add Button */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 4, // more space below this block before table
+          mt: 2, // optional small top margin for spacing from header above
+        }}
+      >
+        {/* Left: Typography */}
+        <Typography variant="h6" fontWeight="600">
+          Country
+        </Typography>
+
+        {/* Right: Add Country Button */}
+        <Button
           component={Link}
           to="/Country/add"
-          variant="contained" 
-          sx={{ height: 40, borderRadius: 3 }}
+          variant="contained"
+          sx={{
+            height: 40,
+            borderRadius: 3,
+            backgroundColor: "#1467D9",
+            color: "#ffffff",
+            textTransform: "none",
+            fontWeight: 600,
+            px: 3,
+            boxShadow: "0px 4px 10px rgba(20, 103, 217, 0.25)",
+            "&:hover": {
+              backgroundColor: "#0f57b8",
+              boxShadow: "0px 6px 14px rgba(20, 103, 217, 0.35)",
+            },
+          }}
         >
-          + Add
+          Add Country
         </Button>
       </Box>
 
@@ -113,31 +174,31 @@ const Country = () => {
         component={Paper}
         sx={{
           mb: 2,
-          borderRadius: 2,
+          border: "1px solid #e0e0e0",
+          borderRadius: 3,
           overflowX: "auto",
           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
         }}
       >
-        <Table>
+        <Table sx={{ tableLayout: "fixed", width: "100%" }}>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                #
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              <TableCell sx={{ fontWeight: 550, width: "10%" }}>#</TableCell>
+              <TableCell sx={{ fontWeight: 550, width: "25%" }}>
                 Country Name
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              <TableCell sx={{ fontWeight: 550, width: "20%" }}>
                 ISO or Internal Code
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              <TableCell sx={{ fontWeight: 550, width: "30%" }}>
                 Geographic Region Or Area
               </TableCell>
-              <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+              <TableCell sx={{ fontWeight: 550, width: "15%" }}>
                 Action
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {currentCountries.map((country) => (
               <TableRow
@@ -149,11 +210,11 @@ const Country = () => {
                   },
                 }}
               >
-                <TableCell>{country.id}</TableCell>
-                <TableCell>{country.name}</TableCell>
-                <TableCell>{country.code}</TableCell>
-                <TableCell>{country.region}</TableCell>
-                <TableCell>
+                <TableCell sx={{ width: "10%" }}>{country.id}</TableCell>
+                <TableCell sx={{ width: "25%" }}>{country.name}</TableCell>
+                <TableCell sx={{ width: "20%" }}>{country.code}</TableCell>
+                <TableCell sx={{ width: "30%" }}>{country.region}</TableCell>
+                <TableCell sx={{ width: "15%" }}>
                   <IconButton
                     size="small"
                     color="primary"
@@ -176,7 +237,6 @@ const Country = () => {
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
       {pageCount > 1 && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 4 }}>
           <Pagination
@@ -198,16 +258,15 @@ const Country = () => {
           sx={{
             borderRadius: 2,
             overflowX: "auto",
-            backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
+            backgroundColor:
+              theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
           }}
         >
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell sx={{ width: 50 }}>#</TableCell>
-                <TableCell sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
-                  List
-                </TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>List</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
