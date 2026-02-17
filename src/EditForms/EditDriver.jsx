@@ -120,13 +120,28 @@ const EditDriver = () => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight="600">
-          Edit Driver - {driver.first_name} {driver.lastname}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Edit driver information
-        </Typography>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 2,
+          mt: 2,
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, ml: 3 }}>
+          <Typography variant="h5" fontWeight="600">
+            Welcome Back
+          </Typography>
+          <Box
+            component="img"
+            src="/assets/country/hand.png"
+            alt="welcome icon"
+            sx={{ width: 37, height: 37 }}
+          />
+        </Box>
       </Box>
 
       <Paper
@@ -137,6 +152,9 @@ const EditDriver = () => {
           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
         }}
       >
+          <Typography variant="h6" fontWeight={700} sx={{ mb: 4 }}>
+          Edit Driver
+        </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             {/* First Name */}
@@ -151,7 +169,8 @@ const EditDriver = () => {
                 onChange={handleChange}
                 placeholder="e.g., John" 
                 required
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3,backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }} 
               />
             </Grid>
 
@@ -167,7 +186,8 @@ const EditDriver = () => {
                 onChange={handleChange}
                 placeholder="e.g., Doe" 
                 required
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3,backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }} 
               />
             </Grid>
 
@@ -183,7 +203,8 @@ const EditDriver = () => {
                 onChange={handleChange}
                 placeholder="e.g., +1234567890" 
                 required
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3, backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }} 
               />
             </Grid>
 
@@ -200,7 +221,8 @@ const EditDriver = () => {
                 onChange={handleChange}
                 placeholder="e.g., john.doe@example.com" 
                 required
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3,backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }} 
               />
             </Grid>
 
@@ -216,7 +238,8 @@ const EditDriver = () => {
                 onChange={handleChange}
                 placeholder="e.g., DL-123456" 
                 required
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3,backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }} 
               />
             </Grid>
 
@@ -225,7 +248,8 @@ const EditDriver = () => {
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
                 Status
               </Typography>
-              <FormControl fullWidth sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }}>
+              <FormControl fullWidth sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3,backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }}>
                 <Select
                   name="is_online"
                   value={form.is_online ? "Online" : "Offline"}
@@ -256,7 +280,8 @@ const EditDriver = () => {
                 value={form.password}
                 onChange={handleChange}
                 placeholder="Leave empty to keep current"
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3,backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }} 
               />
             </Grid>
 
@@ -272,7 +297,8 @@ const EditDriver = () => {
                 onChange={handleChange}
                 placeholder="Company ID"
                 type="number"
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3,backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }} 
               />
             </Grid>
 
@@ -288,7 +314,8 @@ const EditDriver = () => {
                 onChange={handleChange}
                 placeholder="Bus ID"
                 type="number"
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3,backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }} 
               />
             </Grid>
           </Grid>

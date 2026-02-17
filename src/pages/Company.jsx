@@ -16,38 +16,41 @@ import {
   useTheme,
   InputAdornment,
 } from "@mui/material";
-
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import LockIcon from "@mui/icons-material/Lock";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { Link } from "react-router-dom";
-import { useDrivers } from "../context/DriverContext";
+import { useCompanies } from "../context/CompanyContext";
+import { useCountries } from "../context/CountryContext";
 
 const STATUS_IMAGE_MAP = {
-  online: "/assets/driver/online.png",
-  offline: "/assets/driver/offline.png",
+  Logo1: "/assets/company/1.png",
+  Logo2: "/assets/company/2.png",
+  Logo3: "/assets/company/3.png",
+  Logo4: "/assets/company/4.png",
+  Logo5: "/assets/company/5.png",
+  Logo6: "/assets/company/6.png",
 };
 
 const PAGE_SIZE = 4;
 
-const Driver = () => {
+const Company = () => {
   const theme = useTheme();
-  const { drivers, deleteDriver } = useDrivers();
+  const { companies, deleteCompany } = useCompanies();
+  const { countries } = useCountries();
 
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleDelete = (id) => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this driver?"
+      "Are you sure you want to delete this company?"
     );
     if (!confirmed) return;
 
-    deleteDriver(id);
+    deleteCompany(id);
 
-    if ((page - 1) * PAGE_SIZE >= drivers.length - 1) {
+    if ((page - 1) * PAGE_SIZE >= companies.length - 1) {
       setPage((p) => Math.max(p - 1, 1));
     }
   };
@@ -56,28 +59,28 @@ const Driver = () => {
     setPage(value);
   };
 
-  const filteredDrivers = drivers.filter((driver) =>
-    driver.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.lastname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.Email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.license?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.is_online?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.id_company?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-    driver.id_bus?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCompanies = companies.filter((company) =>
+    company.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    company.company_logo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    company.transport_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    company.activity_domain.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    company.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    company.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    company.created_at.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    String(company.id_country).toLowerCase().includes(searchTerm.toLowerCase()) ||
+    company.Email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const currentDrivers = filteredDrivers.slice(
+  const currentCompanies = filteredCompanies.slice(
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE
   );
 
-  const pageCount = Math.ceil(filteredDrivers.length / PAGE_SIZE);
+  const pageCount = Math.ceil(filteredCompanies.length / PAGE_SIZE);
 
   return (
     <Box sx={{ width: "100%" }}>
-
-      {/* Welcome + Search (EXACT SAME AS COMPANY) */}
+      {/* Header */}
       <Box
         sx={{
           mb: 4,
@@ -127,7 +130,7 @@ const Driver = () => {
         />
       </Box>
 
-      {/* Driver + Add Button (STRUCTURE SAME AS COMPANY) */}
+      {/* Title + Button */}
       <Box
         sx={{
           display: "flex",
@@ -138,7 +141,7 @@ const Driver = () => {
         }}
       >
         <Typography variant="h6" fontWeight="600">
-          Driver
+          Country
         </Typography>
 
         <Button
@@ -164,7 +167,7 @@ const Driver = () => {
         </Button>
       </Box>
 
-      {/* Main Table (STYLING SAME AS COMPANY) */}
+      {/* Main Table */}
       <TableContainer
         component={Paper}
         sx={{
@@ -178,123 +181,100 @@ const Driver = () => {
         <Table>
           <TableHead>
             <TableRow>
-              {[
-                "#",
-                "First Name",
-                "Last Name",
-                "Contact No",
-                "Email",
-                "Password",
-                "License No",
-                "Status",
-                "Company",
-                "Bus",
-                "Action",
-              ].map((header) => (
-                <TableCell
-                  key={header}
-                  sx={{
-                    fontWeight: 600,
-                    color: theme.palette.text.primary,
-                  }}
-                >
-                  {header}
-                </TableCell>
-              ))}
+              <TableCell sx={{ fontWeight: 600 }}>#</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Company Name</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Company Logo</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Transport Type</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>
+                Head Office Address
+              </TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>phone No</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Country</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Email Address</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Action</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {currentDrivers.map((driver) => (
-              <TableRow
-                key={driver.id_driver}
-                sx={{
-                  "&:hover": {
-                    backgroundColor:
-                      theme.palette.mode === "light"
-                        ? "#f5f5f5"
-                        : "#2c2c3e",
-                  },
-                }}
-              >
-                <TableCell>{driver.id_driver}</TableCell>
-                <TableCell>{driver.first_name}</TableCell>
-                <TableCell>{driver.lastname}</TableCell>
-                <TableCell>{driver.phone}</TableCell>
-                <TableCell>{driver.Email}</TableCell>
+            {currentCompanies.map((company) => {
+              const country = countries.find(
+                (c) => c.id === Number(company.id_country)
+              );
 
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    {driver.password ? (
-                      <>
-                        <LockIcon
-                          fontSize="small"
-                          sx={{ color: theme.palette.success.main }}
+              return (
+                <TableRow key={company.id_company}>
+                  <TableCell>{company.id_company}</TableCell>
+                  <TableCell>{company.company_name}</TableCell>
+
+                  <TableCell>
+                    <Box
+                      component="img"
+                      src={STATUS_IMAGE_MAP[company.company_logo]}
+                      alt={company.company_logo}
+                      sx={{ width: 48, height: 48, objectFit: "contain" }}
+                    />
+                  </TableCell>
+
+                  <TableCell>{company.transport_type}</TableCell>
+                  <TableCell>{company.address}</TableCell>
+                  <TableCell>{company.phone}</TableCell>
+
+                  {/* ✅ UPDATED COUNTRY COLUMN */}
+                  <TableCell>
+                    {country && (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                        }}
+                      >
+                        <Box
+                          component="img"
+                          src={`https://flagcdn.com/w40/${country.code.toLowerCase()}.png`}
+                          alt={country.name}
+                          sx={{
+                            width: 24,
+                            height: 24,
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                          }}
                         />
-                        <Typography variant="caption" color="textSecondary">
-                          Password set
+                        <Typography variant="body2">
+                          {country.name}
                         </Typography>
-                      </>
-                    ) : (
-                      <>
-                        <LockOpenIcon
-                          fontSize="small"
-                          sx={{ color: theme.palette.error.main }}
-                        />
-                        <Typography variant="caption" color="textSecondary">
-                          No password
-                        </Typography>
-                      </>
+                      </Box>
                     )}
-                  </Box>
-                </TableCell>
+                  </TableCell>
 
-                <TableCell>{driver.license}</TableCell>
+                  <TableCell>{company.Email}</TableCell>
 
-                <TableCell>
-                  <Box
-                    component="img"
-                    src={
-                      STATUS_IMAGE_MAP[
-                        driver.is_online ? "online" : "offline"
-                      ]
-                    }
-                    alt={driver.is_online ? "Online" : "Offline"}
-                    sx={{
-                      width: 48,
-                      height: 48,
-                      objectFit: "contain",
-                    }}
-                  />
-                </TableCell>
-
-                <TableCell>{driver.id_company}</TableCell>
-                <TableCell>{driver.id_bus}</TableCell>
-
-                <TableCell>
-                  <IconButton
-                    size="small"
-                    color="primary"
-                    component={Link}
-                    to={`/Driver/edit/${driver.id_driver}`}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    color="error"
-                    onClick={() => handleDelete(driver.id_driver)}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+                  <TableCell>
+                    <IconButton
+                      size="small"
+                      color="primary"
+                      component={Link}
+                      to={`/Company/edit/${company.id_company}`}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={() =>
+                        handleDelete(company.id_company)
+                      }
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {/* Pagination (SAME POSITION) */}
       {pageCount > 1 && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 4 }}>
           <Pagination
@@ -305,52 +285,8 @@ const Driver = () => {
           />
         </Box>
       )}
-
-      {/* Driver Display (SAME STRUCTURE AS COMPANY DISPLAY) */}
-      <Box>
-        <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
-          Driver Display
-        </Typography>
-
-        <TableContainer
-          component={Paper}
-          sx={{
-            borderRadius: 2,
-            overflowX: "auto",
-            backgroundColor:
-              theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
-          }}
-        >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ width: 50 }}>#</TableCell>
-                <TableCell
-                  sx={{
-                    fontWeight: 600,
-                    color: theme.palette.text.primary,
-                  }}
-                >
-                  List
-                </TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {currentDrivers.map((driver) => (
-                <TableRow key={driver.id_driver}>
-                  <TableCell>{driver.id_driver}</TableCell>
-                  <TableCell>
-                    {driver.first_name} {driver.lastname}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
     </Box>
   );
 };
 
-export default Driver;
+export default Company;

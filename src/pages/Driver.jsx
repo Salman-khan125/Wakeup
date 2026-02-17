@@ -186,9 +186,7 @@ const Driver = () => {
                 "Email",
                 "Password",
                 "License No",
-                "Status",
-                "Company",
-                "Bus",
+               
                 "Action",
               ].map((header) => (
                 <TableCell
@@ -223,52 +221,9 @@ const Driver = () => {
                 <TableCell>{driver.phone}</TableCell>
                 <TableCell>{driver.Email}</TableCell>
 
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    {driver.password ? (
-                      <>
-                        <LockIcon
-                          fontSize="small"
-                          sx={{ color: theme.palette.success.main }}
-                        />
-                        <Typography variant="caption" color="textSecondary">
-                          Password set
-                        </Typography>
-                      </>
-                    ) : (
-                      <>
-                        <LockOpenIcon
-                          fontSize="small"
-                          sx={{ color: theme.palette.error.main }}
-                        />
-                        <Typography variant="caption" color="textSecondary">
-                          No password
-                        </Typography>
-                      </>
-                    )}
-                  </Box>
-                </TableCell>
+               
 
                 <TableCell>{driver.license}</TableCell>
-
-                <TableCell>
-                  <Box
-                    component="img"
-                    src={
-                      STATUS_IMAGE_MAP[
-                        driver.is_online ? "online" : "offline"
-                      ]
-                    }
-                    alt={driver.is_online ? "Online" : "Offline"}
-                    sx={{
-                      width: 48,
-                      height: 48,
-                      objectFit: "contain",
-                    }}
-                  />
-                </TableCell>
-
-                <TableCell>{driver.id_company}</TableCell>
                 <TableCell>{driver.id_bus}</TableCell>
 
                 <TableCell>

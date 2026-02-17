@@ -96,9 +96,10 @@ const AddCountry = () => {
             display: "flex",
             alignItems: "center",
             gap: 1,
+            ml:3,
           }}
         >
-          <Typography variant="h5" fontWeight="600">
+          <Typography variant="h5" fontWeight="600" >
             Welcome Back
           </Typography>
           <Box
@@ -180,7 +181,8 @@ const AddCountry = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: 3,
-                    backgroundColor: "#F5F7FB",
+                      backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
                   },
                 }}
               />
@@ -202,7 +204,8 @@ const AddCountry = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: 3,
-                    backgroundColor: "#F5F7FB",
+                      backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
                   },
                 }}
               />
@@ -220,7 +223,8 @@ const AddCountry = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: 3,
-                    backgroundColor: "#F5F7FB",
+                      backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
                   },
                 }}
               >
@@ -272,6 +276,6 @@ const AddCountry = () => {
       </Paper>
     </Box>
   );
-};
+}
 
 export default AddCountry;

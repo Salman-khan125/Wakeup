@@ -191,7 +191,7 @@ const Stop = () => {
                 "Latitude",
                 "Longitude",
                 "City",
-                "Country ID",
+              
                 "QR",
                 "Action",
               ].map((header) => (
@@ -229,7 +229,7 @@ const Stop = () => {
                   <TableCell>{stop.Latitude || "N/A"}</TableCell>
                   <TableCell>{stop.longitude || "N/A"}</TableCell>
                   <TableCell>{stop.city || "N/A"}</TableCell>
-                  <TableCell>{stop.id_country || "N/A"}</TableCell>
+                
 
                   <TableCell>
                     <Box

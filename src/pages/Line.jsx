@@ -179,7 +179,7 @@ const Line = () => {
                 "Line Name",
                 "Description",
                 "Distance (km)",
-                "Company ID",
+                
                 "Action",
               ].map((header) => (
                 <TableCell
@@ -212,7 +212,7 @@ const Line = () => {
                 <TableCell>{line.line_name}</TableCell>
                 <TableCell>{line.description}</TableCell>
                 <TableCell>{line.distance_km}</TableCell>
-                <TableCell>{line.id_company}</TableCell>
+                
                 <TableCell>
                   <IconButton
                     size="small"

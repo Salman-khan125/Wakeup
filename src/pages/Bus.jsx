@@ -194,7 +194,7 @@ const Bus = () => {
                 "No of Seat",
                 "Bus Model",
                 "Bus Status",
-                "Company",
+                
                 "Action",
               ].map((header) => (
                 <TableCell
@@ -259,7 +259,7 @@ const Bus = () => {
                   )}
                 </TableCell>
 
-                <TableCell>{bus.id_company}</TableCell>
+               
 
                 <TableCell>
                   <IconButton

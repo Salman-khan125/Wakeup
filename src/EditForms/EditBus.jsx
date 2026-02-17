@@ -83,13 +83,28 @@ const EditBus = () => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight="600">
-          Edit Bus
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Edit bus information
-        </Typography>
+          <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 2,
+          mt: 2,
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, ml: 3 }}>
+          <Typography variant="h5" fontWeight="600">
+            Welcome Back
+          </Typography>
+          <Box
+            component="img"
+            src="/assets/country/hand.png"
+            alt="welcome icon"
+            sx={{ width: 37, height: 37 }}
+          />
+        </Box>
       </Box>
 
       <Paper
@@ -100,6 +115,9 @@ const EditBus = () => {
           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
         }}
       >
+         <Typography variant="h6" fontWeight={700} sx={{ mb: 4 }}>
+          Edit Bus
+        </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
@@ -113,7 +131,8 @@ const EditBus = () => {
                 onChange={handleChange}
                 placeholder="e.g., ABC-123" 
                 required
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3, backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }} 
               />
             </Grid>
 
@@ -129,7 +148,8 @@ const EditBus = () => {
                 placeholder="e.g., 50" 
                 type="number"
                 required
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3, backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }} 
               />
             </Grid>
 
@@ -144,7 +164,8 @@ const EditBus = () => {
                 onChange={handleChange}
                 placeholder="e.g., Volvo B9R" 
                 required
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3,backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }} 
               />
             </Grid>
 
@@ -152,7 +173,8 @@ const EditBus = () => {
               <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
                 Bus Status
               </Typography>
-              <FormControl fullWidth sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }}>
+              <FormControl fullWidth sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 ,backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",} }}>
                 <Select
                   name="status"
                   value={form.status}
@@ -179,7 +201,8 @@ const EditBus = () => {
                 value={form.id_company}
                 onChange={handleChange}
                 placeholder="Company ID" 
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }} 
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3,backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }} 
               />
             </Grid> }
           </Grid>

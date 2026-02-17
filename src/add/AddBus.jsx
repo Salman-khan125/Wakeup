@@ -10,8 +10,10 @@ import {
   MenuItem,
   Select,
   FormControl,
+   InputAdornment,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+
 import { useBuses } from "../context/BusContext";
 
 // Status options for dropdown
@@ -51,6 +53,44 @@ const AddBus = () => {
 
   return (
     <Box sx={{ width: "100%" }}>
+
+        <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 2,
+          mt: 2,
+        }}
+      >
+        {/* Left: Welcome Back + Icon */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            ml:3,
+          }}
+        >
+          <Typography variant="h5" fontWeight="600" >
+            Welcome Back
+          </Typography>
+          <Box
+            component="img"
+            src="/assets/country/hand.png"
+            alt="welcome icon"
+            sx={{
+              width: 37,
+              height: 37,
+              objectFit: "contain",
+            }}
+          />
+        </Box>
+
+     
+      </Box>
       <Paper
         elevation={0}
         sx={{
@@ -61,17 +101,11 @@ const AddBus = () => {
         }}
       >
         {/* Title */}
-        <Typography variant="h6" fontWeight={600}>
+        <Typography variant="h6" fontWeight={600} sx={{mb:5}}>
           Add Bus
         </Typography>
 
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ mt: 0.5, mb: 3 }}
-        >
-          Add a new bus to your system
-        </Typography>
+       
 
         {/* Form with onSubmit handler */}
         <form onSubmit={handleSubmit}>
@@ -90,6 +124,8 @@ const AddBus = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: 3,
+                     backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
                   },
                 }}
               />
@@ -110,6 +146,8 @@ const AddBus = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: 3,
+                     backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
                   },
                 }}
               />
@@ -129,6 +167,8 @@ const AddBus = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     borderRadius: 3,
+                     backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
                   },
                 }}
               />
@@ -141,7 +181,8 @@ const AddBus = () => {
               </Typography>
               <FormControl
                 fullWidth
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3, backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f", } }}
               >
                 <Select
                   name="status"
@@ -165,25 +206,7 @@ const AddBus = () => {
               </Typography>
             </Grid>
 
-            {/* Company */}
-            <Grid item xs={12} md={6}>
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                Company ID
-              </Typography>
-              <TextField
-                fullWidth
-                name="id_company" // Changed to match form state
-                value={form.id_company} // Changed to match form state
-                onChange={handleChange}
-                placeholder="e.g., 1"
-                type="number"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 3,
-                  },
-                }}
-              />
-            </Grid>
+           
           </Grid>
 
           {/* Submit Button */}

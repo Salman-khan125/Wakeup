@@ -13,13 +13,14 @@ export const useCountries = () => {
 export const CountryProvider = ({ children }) => {
   // Use YOUR exact data structure BUT fix field names to match your Country.jsx
   const [countries, setCountries] = useState([
-  { id: 1, name: "London", code: "SL", region: "Region" },
-  { id: 2, name: "Paris", code: "FR", region: "Region" },
-  { id: 3, name: "Tokyo", code: "JP", region: "Region" },
-  { id: 4, name: "New York", code: "US", region: "Region" },
-  { id: 5, name: "Berlin", code: "DE", region: "Region" },
-  { id: 6, name: "Madrid", code: "ES", region: "Region" },
-  { id: 7, name: "Rome", code: "IT", region: "Region" },
+  { id: 1, name: "United Kingdom", code: "GB", region: "Europe" },
+{ id: 2, name: "France", code: "FR", region: "Europe" },
+{ id: 3, name: "Japan", code: "JP", region: "Asia" },
+{ id: 4, name: "United States", code: "US", region: "North America" },
+{ id: 5, name: "Germany", code: "DE", region: "Europe" },
+{ id: 6, name: "Spain", code: "ES", region: "Europe" },
+{ id: 7, name: "Italy", code: "IT", region: "Europe" },
+
   ]);
 
   const addCountry = (newCountry) => {
