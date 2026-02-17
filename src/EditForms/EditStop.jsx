@@ -146,7 +146,7 @@ const EditStop = () => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 3, ml:3 }}>
         <Typography variant="h5" fontWeight="600">
           Edit Stop
         </Typography>
@@ -277,98 +277,52 @@ const EditStop = () => {
             </Grid>
 
             {/* QR Code - File Upload */}
-            <Grid item xs={12} md={6}>
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
-                QR Codes
-              </Typography>
-              
-              {/* File Upload Area */}
-              <Box
-                sx={{
-                  border: `2px dashed ${theme.palette.mode === 'light' ? '#ccc' : '#555'}`,
-                  borderRadius: 3,
-                  p: 2,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  minHeight: 120,
-                  backgroundColor: theme.palette.mode === "light" ? "#fafafa" : "#2a2a3c",
-                  position: "relative",
-                  transition: "all 0.3s",
-                  "&:hover": {
-                    borderColor: theme.palette.primary.main,
-                    backgroundColor: theme.palette.mode === "light" ? "#f0f0f0" : "#333346",
-                  }
-                }}
-              >
-                {uploadedFile ? (
-                  // File uploaded state
-                  <Box sx={{ textAlign: "center", width: "100%" }}>
-                    <Typography variant="body2" color="success.main">
-                      ✓ File Uploaded
-                    </Typography>
-                    <Typography variant="body2" sx={{ mt: 1, color: "text.secondary" }}>
-                      {fileName}
-                    </Typography>
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={handleRemoveFile}
-                      sx={{ mt: 1 }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Box>
-                ) : (
-                  // Upload prompt
-                  <>
-                    <CloudUploadIcon sx={{ fontSize: 40, color: "text.secondary", mb: 1 }} />
-                    <Typography variant="body2" color="text.secondary" textAlign="center">
-                      Drag & drop QR code image or
-                    </Typography>
-                    <Button
-                      component="label"
-                      variant="outlined"
-                      size="small"
-                      sx={{ mt: 1, borderRadius: 2 }}
-                    >
-                      Browse File
-                      <input
-                        type="file"
-                        hidden
-                        accept="image/*,.pdf,.png,.jpg,.jpeg"
-                        onChange={handleFileUpload}
-                      />
-                    </Button>
-                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
-                      Supports: PNG, JPG, JPEG, PDF
-                    </Typography>
-                  </>
-                )}
-              </Box>
+            {/* QR Code */}
+<Grid item xs={12} md={6}>
+  <Typography variant="body2" sx={{ mb: 1, fontWeight: 700 }}>
+    QR Code
+  </Typography>
 
-              {/* QR Code dropdown */}
-              <Typography variant="body2" sx={{ mt: 2, mb: 1, fontWeight: 700, color: "text.secondary" }}>
-                Or select from existing QR codes:
-              </Typography>
-              <FormControl fullWidth sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 3,
-                },
-              }}>
-                <Select
-                  name="qr_code" // Updated field name
-                  value={form.qr_code}
-                  onChange={handleChange}
-                  sx={{ borderRadius: 3 }}
-                >
-                  <MenuItem value="Frame1">Frame 1</MenuItem>
-                  <MenuItem value="Frame2">Frame 2</MenuItem>
-                  {uploadedFile && <MenuItem value="custom">Custom Upload</MenuItem>}
-                </Select>
-              </FormControl>
-            </Grid>
+  <TextField
+    fullWidth
+    value={fileName}
+    placeholder="Upload QR Code"
+    InputProps={{
+      readOnly: true,
+      endAdornment: (
+        <>
+          {uploadedFile && (
+            <IconButton size="small" onClick={handleRemoveFile}>
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          )}
+          <Button
+            component="label"
+            variant="contained"
+            size="small"
+            sx={{ ml: 1, borderRadius: 2 , backgroundColor:"#1467D9"}}
+          >
+            Browse
+            <input
+              type="file"
+              hidden
+              accept="image/*,.pdf,.png,.jpg,.jpeg"
+              onChange={handleFileUpload}
+            />
+          </Button>
+        </>
+      ),
+    }}
+    sx={{
+      "& .MuiOutlinedInput-root": {
+        borderRadius: 3,
+        backgroundColor:
+          theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
+      },
+    }}
+  />
+</Grid>
+
           </Grid>
 
           {/* Action Buttons */}

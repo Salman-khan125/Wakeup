@@ -54,15 +54,42 @@ const AddLine = () => {
   return (
     <Box sx={{ width: "100%" }}>
       {/* Header - Same structure */}
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight="600">
-          Add New Line
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Add new line information
-        </Typography>
-      </Box>
+                <Box
+  sx={{
+    mb: 4,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 2,
+    mt: 2,
+  }}
+>
+  {/* LEFT SIDE */}
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      gap: 1,
+      ml: 3,
+    }}
+  >
+    <Typography variant="h5" fontWeight="600">
+      Welcome Back
+    </Typography>
 
+    <Box
+      component="img"
+      src="/assets/country/hand.png"
+      alt="welcome icon"
+      sx={{
+        width: 37,
+        height: 37,
+        objectFit: "contain",
+      }}
+    />
+  </Box>
+  </Box>
       <Paper
         elevation={0}
         sx={{
@@ -71,6 +98,9 @@ const AddLine = () => {
           backgroundColor: theme.palette.mode === "light" ? "#fff" : "#1e1e2f",
         }}
       >
+      <Typography variant="h6" fontWeight={700} sx={{ mb: 4 }}>
+    Add Driver
+  </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             {/* Line Name */}
@@ -88,6 +118,8 @@ const AddLine = () => {
                 sx={{ 
                   "& .MuiOutlinedInput-root": { 
                     borderRadius: 3,
+                    backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
                   } 
                 }} 
               />
@@ -107,6 +139,8 @@ const AddLine = () => {
                 sx={{ 
                   "& .MuiOutlinedInput-root": { 
                     borderRadius: 3,
+                    backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
                   } 
                 }} 
               />
@@ -128,6 +162,8 @@ const AddLine = () => {
                 sx={{ 
                   "& .MuiOutlinedInput-root": { 
                     borderRadius: 3,
+                    backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
                   } 
                 }} 
               />
@@ -147,7 +183,8 @@ const AddLine = () => {
                 placeholder="Enter company ID"
                 sx={{ 
                   "& .MuiOutlinedInput-root": { 
-                    borderRadius: 3,
+                    borderRadius: 3,backgroundColor:
+              theme.palette.mode === "light" ? "#F5F7FB" : "#1e1e2f",
                   } 
                 }} 
               />
@@ -167,6 +204,7 @@ const AddLine = () => {
               variant="contained"
               sx={{
                 borderRadius: 3,
+              
                 px: 4,
                 py: 1
               }}
@@ -178,6 +216,7 @@ const AddLine = () => {
               onClick={() => navigate("/Line")}
               sx={{
                 borderRadius: 3,
+                
                 px: 4,
                 py: 1
               }}

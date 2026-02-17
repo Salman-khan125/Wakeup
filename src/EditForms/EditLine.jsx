@@ -84,11 +84,36 @@ const EditLine = () => {
   return (
     <Box sx={{ width: "100%" }}>
       {/* Header */}
-      <Box sx={{ mb: 3 }}>
+          <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 2,
+          mt: 2,
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, ml: 3 }}>
+          <Typography variant="h5" fontWeight="600">
+            Welcome Back
+          </Typography>
+          <Box
+            component="img"
+            src="/assets/country/hand.png"
+            alt="welcome icon"
+            sx={{ width: 37, height: 37 }}
+          />
+        </Box>
+      </Box>
+      
+
+      <Box sx={{ mb: 3 , ml:3}}>
         <Typography variant="h5" fontWeight="600">
           Edit Line - {line.line_name}
         </Typography>
-        <Typography variant="body2" color="textSecondary">
+        <Typography variant="body2" color="textSecondary" >
           Edit line information
         </Typography>
       </Box>

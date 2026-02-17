@@ -131,7 +131,7 @@ const EditCompany = () => {
           mt: 2,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, ml: 3 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, ml: 4 }}>
           <Typography variant="h5" fontWeight="600">
             Welcome Back
           </Typography>
