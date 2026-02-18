@@ -123,7 +123,7 @@ const Login = () => {
           <TextField
             fullWidth
             name="email"
-            placeholder="Com"
+            placeholder="Email"
             value={form.email}
             onChange={handleChange}
             sx={{
