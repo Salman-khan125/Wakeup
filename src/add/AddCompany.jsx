@@ -380,22 +380,32 @@ const AddCompany = () => {
     </Grid>
 
     {/* Submit Button */}
-    <Box sx={{ mt: 5 }}>
-      <Button
-        type="submit"
-        variant="contained"
-        sx={{
-          textTransform: "none",
-          px: 5,
-          py: 1.5,
-          borderRadius: 3,
-          backgroundColor: "#2563EB",
-          fontWeight: 600,
-        }}
-      >
-        Submit
-      </Button>
-    </Box>
+          <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                px: 4,
+                py: 1.2,
+                borderRadius: 2,
+              }}
+            >
+              Submit
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => navigate("/Bus")}
+              sx={{
+                textTransform: "none",
+                px: 4,
+                py: 1.2,
+                borderRadius: 2,
+              }}
+            >
+              Cancel
+            </Button>
+          </Box>
   </form>
 </Paper>
 

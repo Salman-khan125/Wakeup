@@ -26,6 +26,7 @@ import Trip from "./pages/Trip";
 import BusTrip from "./pages/BusTrip";
 import Geolocation from "./pages/Geolocation";
 import Alert from "./pages/Alert";
+import Login from "./pages/Login";
 
 import AddCountry from "./add/AddCountry";
 import AddCompany from "./add/AddCompany";
@@ -50,6 +51,7 @@ import EditTrip from "./EditForms/EditTrip";
 import EditBusTrip from "./EditForms/EditBusTrip";
 import EditGeolocation from "./EditForms/EditGeolocation";
 import EditAlert from "./EditForms/EditAlert";
+
 
 function App({ toggleTheme, mode }) {
   const theme = useTheme();
@@ -141,6 +143,8 @@ function App({ toggleTheme, mode }) {
           <Route path="/Line" element={<Line />} />
           <Route path="/Line/add" element={<AddLine />} />
           <Route path="/Line/edit/:id" element={<EditLine />} />
+          <Route path="/Login" element={<Login />} />
+          
 
           <Route path="/Stop" element={<Stop />} />
           <Route path="/Stop/add" element={<AddStop />} />
@@ -160,6 +164,7 @@ function App({ toggleTheme, mode }) {
           <Route path="/Alert" element={<Alert />} />
           <Route path="/Alert/add" element={<AddAlert />} />
           <Route path="/Alert/edit/:id" element={<EditAlert />} />
+          
         </Routes>
       </Box>
     </Box>

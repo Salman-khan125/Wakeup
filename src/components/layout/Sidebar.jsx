@@ -25,7 +25,9 @@ const menuItems = [
   { text: "Trip", icon: "/assets/trip/trip.png", path: "/Trip" },
   { text:  "BusTrip",icon: "/asset/BusTrip/BuaTrip.png", path:"/BusTrip"},
   { text: "Geolocation", icon: "/asset/Geolocation/Geolocation.png", path: "/Geolocation" },
-  { text: "Alert", icon: "/asset/Alert/Alert.png", path: "/Alert" }
+  { text: "Alert", icon: "/assets/alert/Alert.png", path: "/Alert" },
+  { text: "Login", icon: "/assets/login/Login.png", path: "/Login" }
+
 ];
 
 

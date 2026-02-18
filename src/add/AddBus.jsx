@@ -101,7 +101,7 @@ const AddBus = () => {
         }}
       >
         {/* Title */}
-        <Typography variant="h6" fontWeight={600} sx={{mb:5}}>
+        <Typography variant="h6" fontWeight={600} sx={{mb:3}}>
           Add Bus
         </Typography>
 
@@ -208,6 +208,7 @@ const AddBus = () => {
 
            
           </Grid>
+          
 
           {/* Submit Button */}
           <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
@@ -221,7 +222,7 @@ const AddBus = () => {
                 borderRadius: 2,
               }}
             >
-              Add Bus
+              Submit
             </Button>
             <Button
               variant="outlined"

@@ -324,7 +324,7 @@ const AddDriver = () => {
                                 py: 1
                             }}
                         >
-                            Add Driver
+                            Submit
                         </Button>
                         <Button
                             variant="outlined"
